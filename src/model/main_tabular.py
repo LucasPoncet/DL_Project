@@ -1,4 +1,3 @@
-# src/model/main_tabular.py
 from __future__ import annotations
 
 from typing import TypedDict, cast  
@@ -34,7 +33,7 @@ hyper: HParams = {
     "emb_dims": [],
     "hidden_layers_size": [128, 128, 128],
     "activation": "relu",
-    "batch_normalization": False,
+    "batch_normalization": True,
     "dropout_rate": 0.2,
     "learning_rate": 1e-3,
     "max_epoch": 50,
@@ -58,7 +57,7 @@ cat_cols = ["cepage", "winery"]
 
 
 def main() -> None:
-    set_seed(42)
+    set_seed(100)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # ─────────────────────────────────────────────────────────────── #

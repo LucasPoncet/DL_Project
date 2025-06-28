@@ -7,7 +7,7 @@ import numpy as np
 import torch
 
 
-def set_seed(seed: int = 42) -> None:
+def set_seed(seed: int = 100) -> None:
     """Reproductibilité."""
     random.seed(seed)
     np.random.seed(seed)
