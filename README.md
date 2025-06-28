@@ -1,13 +1,23 @@
-# DL_Wine: Wine Quality Prediction
+# DL_Wine: Predicting Wine Quality from Weather Data
 
-This repository contains code and analysis to determine whether a given year is suitable for purchasing a specific wine based on meteorological data and historical wine grades. The goal is to predict wine quality based on climatic factors.
+This project leverages deep learning to predict wine quality based on historical meteorological data and wine ratings collected from Vivino. The objective is to provide predictive insights on whether a specific year's climatic conditions are favorable for producing high-quality wine.
+
+---
+
+## Project Overview
+
+This repository includes:
+- **Data acquisition and preprocessing scripts**
+- **Machine Learning (ML) models**
+- **Analytical Jupyter notebooks**
 
 ---
 
 ## Installation
 
 ### Dependencies
-Install necessary Python packages:
+
+Install required packages via `requirements.txt`:
 
 ```bash
 pip install -r requirements.txt
@@ -16,41 +26,49 @@ pip install -r requirements.txt
 Or manually:
 
 ```bash
-pip install xarray netcdf4 pandas numpy matplotlib
-```
-
-Alternatively, using `conda`:
-
-```bash
-conda install -c conda-forge xarray netcdf4 pandas numpy matplotlib
+pip install pandas numpy matplotlib xarray netcdf4 torch torchvision pytorch-lightning
 ```
 
 ---
 
-## Dataset
+## Data
 
-### Meteorological Data
-Download the meteorological dataset from the official Météo-France repository:
+### Weather Data
 
-- [Météo-France Dataset (ID: 6569b51ae64326786e4e8e1a)](https://meteo.data.gouv.fr/datasets/6569b51ae64326786e4e8e1a)
+Weather data is sourced from Météo-France and organized by department:
 
-Save this data in the `data/weather_csv` directory.
+- Historical data (1950-2023)
+- Recent data (2024-2025)
 
-### Wine Quality Data
-The wine quality data has been collected via web scraping (see `src/scraper/NB.ipynb`).
+Stored in:
+```
+data/weather/
+data/weather_by_year/
+data/weather_by_year_cleaned/
+```
+
+### Wine Data
+
+Wine quality ratings scraped from Vivino:
+
+- Raw data: `data/Wine/vivino_wines.csv`
+- Regions metadata: `data/Wine/regions.csv`
 
 ---
 
 ## Quick Start
 
-Load and inspect weather data quickly:
+### Example: Loading Wine & Weather data
 
 ```python
 import pandas as pd
 
-# Example loading data
-df = pd.read_csv('data/weather_csv/Q_33_previous-1950-2023_RR-T-Vent.csv')
-print(df.head())
+wine_df = pd.read_csv('data/Wine/vivino_wines.csv')
+weather_df = pd.read_parquet('data/weather_features/weather_features_33.parquet')
+
+# Inspect datasets
+print(wine_df.head())
+print(weather_df.head())
 ```
 
 ---
@@ -60,12 +78,18 @@ print(df.head())
 ```
 DL_Wine
 ├─ data/
-│  ├─ weather_csv/
-│  └─ usable_stations/
+│  ├─ weather/                   # Raw weather CSV data
+│  ├─ weather_by_year/           # Weather data by year (raw)
+│  ├─ weather_by_year_cleaned/   # Cleaned yearly weather data
+│  ├─ weather_features/          # Extracted weather features
+│  ├─ Wine/                      # Vivino scraped wine data
+│  └─ weather_pq/                # Cleaned Parquet weather data
 ├─ src/
-│  ├─ model/  # Model training and prediction scripts
-│  ├─ preprocessing/  # Data cleaning and feature extraction
-│  └─ scraper/  # Web scraping scripts for wine quality data
+│  ├─ model/                     # ML model scripts and classes
+│  ├─ preprocessing/
+│  │  ├─ Weather/                # Weather preprocessing notebooks and CSV
+│  │  └─ Wine & Weather/         # Scripts/notebooks for merging datasets
+│  └─ scrapper/                  # Scraping scripts
 ├─ requirements.txt
 ├─ README.md
 └─ License
@@ -77,26 +101,28 @@ DL_Wine
 
 ### Data Preprocessing
 
-Preprocess weather data and create feature datasets:
+Generate weather features:
 
 ```bash
-cd src/preprocessing
+cd src/preprocessing/Weather
 jupyter notebook features_weather.ipynb
+```
+
+Merge Wine and Weather data:
+
+```bash
+cd src/preprocessing/"Wine & Weather"
+jupyter notebook WQI.ipynb
 ```
 
 ### Model Training
 
-Train and evaluate models:
+Train and evaluate the predictive model:
 
-(Details to be completed)
-
----
-
-## Analysis & Visualization
-
-Use provided notebooks to visualize and analyze weather features and wine quality relationships:
-
-- `Verification_weather.ipynb`: Checks the consistency of weather data.
+```bash
+cd src/model
+python main_tabular.py
+```
 
 ---
 
@@ -118,4 +144,4 @@ This project is licensed under the MIT License. See the `License` file for detai
 
 ---
 
-**Enjoy your wine prediction journey!**
+Enjoy predicting wine quality!
