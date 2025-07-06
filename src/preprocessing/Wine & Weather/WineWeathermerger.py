@@ -5,28 +5,30 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.neighbors import BallTree
 import ast
+from pathlib import Path
 
 dfr = pd.read_csv('data/wine/regions.csv')
 dfr['latitude'] = pd.to_numeric(dfr['latitude'], errors='coerce')
 dfr['longitude'] = pd.to_numeric(dfr['longitude'], errors='coerce')
 
-dfv = pd.read_csv('data/vivino_wines.csv')
+dfv = pd.read_csv('data/Wine/vivino_wines.csv')
 
-df10 = pd.read_parquet('data/weather_cleaned_2010.parquet')
-df11 = pd.read_parquet('data/weather_cleaned_2011.parquet')
-df12 = pd.read_parquet('data/weather_cleaned_2012.parquet')
-df13 = pd.read_parquet('data/weather_cleaned_2013.parquet')
-df14 = pd.read_parquet('data/weather_cleaned_2014.parquet')
-df15 = pd.read_parquet('data/weather_cleaned_2015.parquet')
-df16 = pd.read_parquet('data/weather_cleaned_2016.parquet')
-df17 = pd.read_parquet('data/weather_cleaned_2017.parquet')
-df18 = pd.read_parquet('data/weather_cleaned_2018.parquet')
-df19 = pd.read_parquet('data/weather_cleaned_2019.parquet')
-df20 = pd.read_parquet('data/weather_cleaned_2020.parquet')
-df21 = pd.read_parquet('data/weather_cleaned_2021.parquet')
-df22 = pd.read_parquet('data/weather_cleaned_2022.parquet')
-df23 = pd.read_parquet('data/weather_cleaned_2023.parquet')
-df24 = pd.read_parquet('data/weather_cleaned_2024.parquet')
+DATA_WEATHER = Path('data/weather_by_year_cleaned')
+df10 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2010.parquet')
+df11 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2011.parquet')
+df12 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2012.parquet')
+df13 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2013.parquet')
+df14 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2014.parquet')
+df15 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2015.parquet')
+df16 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2016.parquet')
+df17 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2017.parquet')
+df18 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2018.parquet')
+df19 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2019.parquet')
+df20 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2020.parquet')
+df21 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2021.parquet')
+df22 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2022.parquet')
+df23 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2023.parquet')
+df24 = pd.read_parquet(f'{DATA_WEATHER}/weather_cleaned_2024.parquet')
 
 df10['latitude'] = pd.to_numeric(df10['latitude'], errors='coerce')
 df10['longitude'] = pd.to_numeric(df10['longitude'], errors='coerce')
@@ -72,7 +74,7 @@ def extract_dominant(sep_str: str | float) -> str | None:
     try:
         # literal_eval turns the single-quoted Python-style string
         # into a real list[dict] without executing any code
-        grape_list = ast.literal_eval(sep_str)
+        grape_list = ast.literal_eval(sep_str) # type: ignore
         if isinstance(grape_list, list) and grape_list:
             return grape_list[0].get("seo_name")   # dominant grape
     except (ValueError, SyntaxError):

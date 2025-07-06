@@ -1,0 +1,501 @@
+region_clean,n_wines,lat_mean,lon_mean
+aloxe corton,29,47.0546,4.8647
+aloxe corton clos du chapitre,3,47.0574,4.8635
+aloxe corton la toppe au vert,2,47.0577,4.8614
+aloxe corton les chaillots,6,47.05599999999999,4.864
+aloxe corton les fournieres,4,47.0579,4.8629
+aloxe corton les marechaudes,4,47.05587,4.86408
+aloxe corton les moutottes,1,47.0724,4.8692
+aloxe corton les petites lolieres,1,47.0565,4.8635
+aloxe corton les valozieres,3,47.0581,4.862
+aloxe corton premier cru,7,47.05700000000001,4.863
+alsace,83,48.232880000000016,7.249900000000013
+alsace grand cru,3,48.23288,7.2499
+anjou,39,47.349999999999966,-0.5
+anjou villages,3,47.41,-0.500537438345074
+anjou villages brissac,1,47.16576,-0.33012
+arbois,36,46.901699999999956,5.777199999999996
+arbois pupillin,15,46.883199999999995,5.755399999999999
+aude,7,43.08137,2.4454999999999996
+auxey duresses,27,46.96904584281696,4.759924004832329
+auxey duresses les duresses,1,46.9578,4.7635
+auxey duresses les ecusseaux,2,46.957,4.765
+auxey duresses premier cru,12,46.95735000000001,4.76283
+bandol,35,43.1349,5.7380
+beaujolais,34,46.09048691404974,4.6906599094210755
+beaujolais lantignie,5,46.1406512057814,4.655626493878637
+beaujolais nouveau,6,46.1,4.7
+beaujolais villages,30,46.114685816938135,4.689871898228441
+beaumes de venise,8,44.19377247699347,5.05187
+beaune,18,47.02599999999998,4.841399999999999
+beaune aux coucherias,8,47.0152,4.8398
+beaune aux cras,1,47.024,4.842
+beaune belissand,1,47.016,4.837
+beaune clos des avaux,3,47.01587,4.84254
+beaune clos des ursules,1,47.0234,4.843
+beaune clos du roi,6,47.025,4.8389
+beaune en genet,3,47.0263,4.8429
+beaune le clos des mouches,4,47.041665,4.841333
+beaune les aigrots,4,47.01743,4.83923
+beaune les boucherottes,2,47.0142,4.8361
+beaune les bressandes,6,47.02100000000001,4.844
+beaune les cent vignes,12,47.0216,4.842300000000001
+beaune les chouacheux,3,47.01692,4.84067
+beaune les epenotes,9,47.0156,4.837600000000001
+beaune les feves,2,47.0183,4.8397
+beaune les greves,14,47.0258,4.844099999999999
+beaune les montrevenots,2,47.0173,4.8366
+beaune les reversees,2,47.0161,4.8389
+beaune les teurons,8,47.0247,4.8435
+beaune les toussaints,5,47.0145,4.837
+beaune les tuvilains,7,47.015899999999995,4.839199999999999
+beaune les vignes franches,8,47.01711999999999,4.83712
+beaune pertuisots,2,47.014,4.836
+beaune premier cru,39,47.02479999999997,4.841299999999999
+beaune sur les greves clos sainte anne,1,47.0168,4.8416
+bellet,5,43.7234,7.190900000000001
+blagny la piece sous le bois,1,46.9425,4.7682
+blagny premier cru,2,46.959167,4.740955
+blaye,2,45.1258,-0.6635
+blaye cotes de bordeaux,36,45.133330000000036,-0.66667
+bonnes mares,25,47.19319,4.95796
+bordeaux,163,44.8394884711832,-0.5397329917271372
+bordeaux superieur,78,44.837559984680006,-0.49819583296163816
+bourgogne,188,47.05070075730127,4.393923434528505
+bourgogne cote d or,8,47.0,4.8
+bourgogne cotes dauxerre,7,47.823449999999994,3.5478899999999998
+bourgogne epineuil,3,47.8479,3.951
+bourgogne hautes cotes de nuits,45,47.086266984043725,4.891556873508777
+bourgogne passe tout grains,10,46.999300879084686,4.7648100847580945
+bourgueil,52,47.283263846544855,0.15104726295298374
+brouilly,44,46.100847139155114,4.651533792454113
+bugey,3,46.22198,5.61732
+cabards,7,43.3095387586092,2.315403522823123
+cadillac cotes de bordeaux,21,44.63333,-0.26667000000000013
+cahors,97,44.44889000000001,1.4399999999999986
+canon fronsac,22,44.9244,-0.2716
+cevennes,9,44.10000000000001,3.75
+chambertin,13,47.21,4.95
+chambolle musigny,60,47.18511942704474,4.964025363682441
+chambolle musigny aux beaux bruns,6,47.17250000000001,4.969
+chambolle musigny aux combottes,3,47.180,4.960
+chambolle musigny derriere la grange,2,46.9839,5.00727
+chambolle musigny les amoureuses,15,43.482674999999986,1.220464
+chambolle musigny les baudes,1,47.133346,4.896175
+chambolle musigny les chabiots,1,46.955267,5.09097
+chambolle musigny les charmes,9,47.024744,4.813484
+chambolle musigny les chatelots,3,46.961932,4.919737
+chambolle musigny les combottes,2,47.084102,4.710268
+chambolle musigny les cras,10,47.1728,4.9694
+chambolle musigny les feusselottes,10,47.172000000000004,4.9713
+chambolle musigny les fuees,6,47.066413000000004,4.748460000000001
+chambolle musigny les gruenchers,2,45.859582,3.458747
+chambolle musigny les hauts doix,3,44.691027,4.924336
+chambolle musigny les noirots,4,47.093154,4.959687
+chambolle musigny les plantes,2,47.227747,4.939536
+chambolle musigny les sentiers,10,47.1732,4.970399999999999
+chambolle musigny premier cru,25,47.18600000000001,4.968000000000003
+chapelle chambertin,12,48.45847800000001,6.853677
+charmes chambertin,32,47.16721299999997,4.777512000000001
+chassagne montrachet,32,46.933598505912904,4.746081769736439
+chassagne montrachet chassagne du clos saint jean,3,46.9253,4.7438
+chassagne montrachet clos saint jean,7,46.925000000000004,4.7435
+chassagne montrachet la boudriotte,8,46.92450000000001,4.744
+chassagne montrachet la maltroie,3,46.9244,4.7436
+chassagne montrachet les bondues,1,46.936,4.75
+chassagne montrachet morgeot,6,46.9239,4.741
+chassagne montrachet premier cru,1,46.925,4.744
+chateauneuf du pape,230,44.06311935537927,4.831217811470261
+chenas,22,46.25545999999998,4.700249999999998
+cheverny,11,47.4994,1.4643
+chinon,95,47.16667,0.23332999999999976
+chiroubles,13,44.91387113918996,2.9675407628840373
+chorey les beaune,27,47.0471,4.8613
+cite de carcassonne,2,43.21321,2.35109
+clos blanc,2,46.9324,4.7531
+clos de la roche,26,47.181666370559206,4.935567533835559
+clos de lambrays,7,45.605031,3.692539
+clos de tart,5,47.886801,3.092411
+clos de verger,1,46.9432,4.7642
+clos de vougeot,65,47.163900000000005,4.9508999999999945
+clos des epeneaux,6,47.249568000000004,4.752110000000001
+clos saint denis,16,47.168710000000004,4.812102
+collioure,38,42.53197068802954,3.084026391356177
+corbieres,68,43.08158032658233,2.6854789880195296
+corbieres boutenac,14,43.14803866725092,2.719610999152898
+cornas,91,44.94340000000008,4.846699999999999
+corton,40,47.058,4.8640000000000025
+corton clos du roi,10,47.07350000000001,4.868699999999999
+corton grand cru les marechaudes,7,47.05630000000001,4.8641
+corton la vigne au saint,2,47.0726,4.8710
+corton le rognet et corton,4,47.072,4.87
+corton les bressandes,8,47.07299999999999,4.8691
+corton les carrieres,2,47.0730,4.8694
+corton les combes,2,47.0708,4.8725
+corton les grandes lolieres,5,47.107621,5.074841
+corton les greves,1,47.196343,4.726777
+corton les languettes,2,47.0721,4.8689
+corton les perrieres,4,47.0744,4.8701
+corton les pougets,1,47.072,4.8660667
+corton les renardes,4,47.072651,4.8705757
+corton les vergennes,1,47.0748,4.8705
+costieres de nimes,48,43.75112040688291,4.4166986800805415
+cote de beaune,6,46.98853858668351,4.786391052158075
+cote de nuits,7,47.14999999999999,4.95
+cote de nuits villages,44,47.18110000000001,4.961700000000006
+cote rotie,197,45.48118,4.799330000000024
+coteaux bourguignons,33,47.0,4.75
+coteaux de beziers,4,43.35,3.25
+coteaux de narbonne,1,43.18333,3.0
+coteaux de peyriac,3,43.18332999999999,2.73333
+coteaux de pierrevert,3,43.881814034208496,5.833576484426396
+coteaux denserune,5,43.31667,3.13333
+coteaux du libron,2,43.31667,3.21667
+cotes catalanes,115,42.625,2.5
+cotes de bordeaux,15,44.78733385733415,-0.3330046864508802
+cotes de bourg,37,45.049999999999976,-0.6333300000000005
+cotes de castillon,83,44.849999999999945,-0.033329999999999985
+cotes de francs,27,42.955249999999985,1.7946999999999993
+cotes de malepere,6,43.20011,2.35678
+cotes de provence,48,43.01700000000003,1.7319999999999995
+cotes de rhone villages,31,44.23446037663721,4.675420640305762
+cotes de thau,1,43.4,3.6
+cotes de thongue,5,43.5,3.31667
+cotes du brian,8,43.2964,2.6858
+cotes du rhone,202,44.264975405961756,4.645266570551067
+cotes du rhone villages chusclan,1,44.1673,4.6376
+cotes du rhone villages laudun,1,44.20087,4.64321
+cotes du rhone villages massif duchaux,2,44.08321,4.62145
+cotes du rhone villages plan de dieu,10,44.197108743290485,4.946817367235027
+cotes du rhone villages roaix,9,44.24912,4.74321
+cotes du rhone villages sablet,5,44.21215411027531,5.014080932964322
+cotes du rhone villages saint gervais,1,44.14567,4.87321
+cotes du rhone villages seguret,4,44.25,5.01667
+cotes du rhone villages signargues,7,44.05624185021512,4.702361832020778
+cotes du rhone villages valreas,4,44.11415,0.4081
+cotes du rhone villages visan,12,44.33333,4.96667
+cotes du roussillon,89,42.688610000000054,2.894720000000005
+cotes du roussillon villages,143,42.68672903204232,2.684292528036307
+cotes du roussillon villages caramany,5,42.7169,2.4845
+cotes du roussillon villages latour de france,2,42.65532,2.76543
+cotes du roussillon villages tautavel,4,42.74432,2.83456
+cotes du ventoux,54,44.16345252055222,5.249286775822527
+cotes du vivarais,12,44.38333,4.5
+crozes hermitage,113,45.089649999999914,4.830120000000006
+cte de beaune villages,8,46.975241202156,4.754082138478909
+ctes du jura,21,46.67987000000002,5.727649999999998
+echezeaux,48,47.250528999999965,4.905823999999997
+faugeres,75,43.56514235032611,3.0889050827624205
+fitou,22,42.91666999999998,2.950000000000001
+fixin,24,47.25969999999999,4.973399999999999
+fixin clos de la perriere,2,47.2482,4.9698
+fixin le clos du chapitre,1,47.226453,4.847102
+fixin les hervelets,4,47.2494,4.969
+fleurie,54,46.255228315979835,4.700469249570069
+fronsac,35,44.94528874639298,-0.2826621476031562
+gard,18,43.83333000000002,4.416669999999998
+gevrey chambertin,123,47.224218213063054,4.969401593758258
+gevrey chambertin 1er cru les corbeaux,3,47.244034,5.006001
+gevrey chambertin au closeau,1,47.2248,4.9708
+gevrey chambertin aux combottes,12,47.2115,4.951700000000001
+gevrey chambertin bel air,2,47.221282,5.014509
+gevrey chambertin champeaux,14,47.237200000000016,4.965400000000001
+gevrey chambertin champonnet,1,47.107818,5.060437
+gevrey chambertin clos prieur,6,47.2267,4.956699999999999
+gevrey chambertin clos st jacques,6,47.053408,4.937027999999999
+gevrey chambertin combe au moine,3,47.18126800000001,5.035902
+gevrey chambertin craipillot,1,47.199334,4.872912
+gevrey chambertin en ergot,1,47.2284,4.9587
+gevrey chambertin estournelles st jacques,2,47.23,4.965
+gevrey chambertin fonteny,7,47.22500000000001,4.970999999999999
+gevrey chambertin la bossiere,3,47.2287,4.9653
+gevrey chambertin la perriere,3,47.2283,4.9692
+gevrey chambertin lavaut st jacques,6,47.2302,4.9569
+gevrey chambertin les cazetiers,6,47.2294,4.9679
+gevrey chambertin les goulots,1,47.233,4.978124
+gevrey chambertin petite chapelle,7,47.22007400000001,4.965159
+gevrey chambertin poissenot,6,47.223268,4.979761
+gevrey chambertin premier cru,28,47.228465746308196,4.956623696202734
+gigondas,65,44.156468904982695,4.872897361577142
+givry,15,46.7935,4.742
+givry 1er cru la grande berge,1,46.79189,4.74438
+givry cellier aux moines,4,46.7887,4.74327
+givry clos charle,1,46.7898,4.7431
+givry clos du vernoy,1,46.7933,4.7441
+givry clos jus,1,46.7941,4.7396
+givry clos marole,4,46.79055,4.74369
+givry clos saint paul,2,46.7921,4.7455
+givry en choue,1,46.7926,4.7414
+givry le vigron,1,46.7908,4.7429
+givry les bois chevaux,4,46.7931,4.7425
+givry premier cru,3,46.794900000000005,4.7438
+givry servoisine,4,46.79025,4.74587
+graves,67,44.59999999999995,-0.3999999999999995
+graves de vayres,6,44.53118,0.19971000000000003
+gres de montpellier,13,43.588229999999996,3.890120000000001
+haut medoc,204,45.19999999999997,-0.7666700000000025
+haute vallee de laude,7,42.98333000000001,2.26667
+hautes cotes de beaune,41,47.04444659499168,4.812631757103056
+hermitage,69,45.0616,4.847199999999992
+irancy,15,47.713710999999996,3.661520000000001
+julienas,19,46.2355,4.70997
+jura,3,46.73510000000001,5.6703
+la chaniere,1,46.7905,4.7402
+la grande rue,8,47.1454347,4.9522
+la londe,3,43.1372,6.23941
+la platiere,2,46.95,4.75
+la tache,3,47.1418,4.9516
+ladoix,15,47.063200000000016,4.8747
+ladoix la corvee,2,47.0609,4.86092
+ladoix les buis,1,47.0576,4.8621
+ladoix les grechons et foutrieres,1,47.07,4.8702
+ladoix les joyeuses,1,47.066531,4.870
+languedoc,149,43.60057601202888,3.8827043556146803
+languedoc la clape,36,43.15000000000002,3.0999999999999983
+languedoc roussillon,74,43.599999999999945,3.3833300000000004
+latricieres chambertin,13,47.237,4.963400000000001
+le pays cathare,3,43.25512,2.34876
+les arvelets,2,47.158,4.9515
+les baux de provence,19,43.74320999999998,4.708650000000001
+les bertins,2,46.9511,4.7899
+les boucherottes,3,47.0135,4.8355
+les chanlins bas,5,46.942,4.7638
+les chaponnieres,2,46.943,4.7641
+les charmots,7,46.95100000000001,4.789000000000001
+les combes dessus,1,47.03079,4.737937
+les croix noires,5,46.953,4.777
+les fremiers,3,46.9443,4.7667
+les grands epenots,4,47.073272,4.883233
+les pezerolles,3,47.02020000000001,4.8419
+les poutures,5,46.9425,4.765
+les rugiens bas,5,46.9447,4.7713
+les saussilles,1,46.9515,4.791
+libournais,1,44.9123,-0.24029
+limoux,16,42.51848,3.225940000000001
+lirac,35,44.01666999999998,4.716669999999996
+listrac,35,45.08332999999999,-0.83333
+loire valley,2,47.5,0.75
+luberon,27,43.79999999999998,5.3
+lussac st emilion,16,44.88333,-0.14999999999999997
+macon aze,2,46.41667,4.53333
+macon verze,2,46.3826,4.7527
+madiran,48,43.57614716328285,-0.046424472032066365
+maranges,13,46.88942387048158,4.661764062879198
+maranges clos de la boutiere,2,46.908,4.69
+maranges clos de la fussiere,2,46.8881,4.6801
+maranges la fussiere,9,46.88799999999999,4.6803
+maranges le clos des rois,1,46.8985,4.6895
+maranges les clos roussots,5,46.8887,4.6799
+maranges premier cru,1,46.8945,4.6822
+margaux,296,45.031126361371925,-0.6690579596607694
+marsannay,75,47.28557554078491,4.986347027985513
+maury,20,42.783329999999985,2.6166699999999996
+mazoyeres chambertin,5,47.085004,4.96028
+medoc,81,45.26666999999998,-0.7833299999999995
+menetou salon,15,47.34781999999999,2.36654
+mercurey,53,46.83006118750019,4.738212775152298
+mercurey clos des grands voyens,1,46.83156,4.7436
+mercurey clos des montaigus,1,46.8289,4.7448
+mercurey clos du chateau de montaigu,2,46.8332,4.7382
+mercurey clos marcilly,3,46.833499999999994,4.7429
+mercurey le clos du roy,4,46.8334,4.7446
+mercurey le clos l eveque,1,46.83365,4.74296
+mercurey les champs martin,1,46.8312,4.743
+mercurey les combins,1,46.8273,4.7458
+mercurey les crets,3,46.8261,4.7435
+mercurey les croichots,1,46.83001,4.74112
+mercurey les fourneaux,1,46.82911,4.744
+mercurey les naugues,1,46.832,4.7432
+mercurey les saumonts,2,46.8284,4.7469
+mercurey les vasees,4,46.8268,4.746
+mercurey les velley,1,46.83,4.74
+mercurey premier cru,4,46.8308,4.7417
+mercurey sazenay,3,46.82919999999999,4.7419
+meursault,9,46.974,4.7839
+minervois,81,43.29984594640925,2.6006523854806414
+minervois la liviniere,33,43.20765000000004,2.70654
+montagne saint emilion,50,44.94963926938957,-0.10055119619813757
+monthelie,24,46.978904120778786,4.768373311775671
+monthelie le clos gauthey,1,46.95914,4.77058
+monthelie le clou des chenes,1,46.9575,4.769
+monthelie le meix bataille,1,46.96121,4.77097
+monthelie les champs fulliots,2,46.958,4.771
+monthelie les clous,2,46.957,4.768
+monthelie les duresses,3,46.9575,4.7748
+monthelie les riottes,2,46.95854,4.77338
+monthelie premier cru,5,46.96591121910755,4.7692227705145696
+monthelie sur la velle,4,46.9608,4.7701
+montrachet grand cru,1,46.465539,4.441605
+morey saint denis,29,47.199000000000005,4.9507
+morey saint denis aux charmes,4,47.196,4.9475
+morey saint denis aux cheseaux,1,47.2041,4.9502
+morey saint denis clos baulet,1,47.1951,4.9482
+morey saint denis clos des ormes,7,47.2045,4.9507
+morey saint denis clos sorbe,3,47.1967,4.9504
+morey saint denis la riotte,2,47.2010,4.9475
+morey saint denis le village,1,47.204,4.9519
+morey saint denis les blanchards,1,47.2033,4.9513
+morey saint denis les chaffots,1,47.2048,4.9511
+morey saint denis les charrieres,3,47.1955,4.9485
+morey saint denis les chenevery,2,46.968588,5.054644
+morey saint denis les faconnieres,2,47.2026,4.9510
+morey saint denis les milandes,8,47.2038,4.9513
+morey saint denis les ruchots,2,47.2031,4.9501
+morey saint denis monts luisants,3,47.236725,4.751545
+morey saint denis premier cru,26,47.205,4.950999999999997
+morgon,89,46.1676,4.6705
+moulin a vent,68,46.1998,4.7223
+muscat de beaumes de venice,1,44.1231,5.0213
+musigny,14,47.1777,4.9614
+northern rhne,2,45.23,4.82234
+nuits saint georges,83,47.136199999999945,4.948300000000004
+nuits saint georges aux argillas,4,47.1337,4.95489
+nuits saint georges aux boudots,2,47.1546,4.9446
+nuits saint georges aux bousselots,6,47.15485999999999,4.943640000000001
+nuits saint georges aux champs perdrix,1,47.139,4.951
+nuits saint georges aux cras,1,47.158505,4.766939
+nuits saint georges aux murgers,12,47.13779999999999,4.9517999999999995
+nuits saint georges aux perdrix,2,47.1342,4.9463
+nuits saint georges aux thorey,7,47.1384,4.948900000000001
+nuits saint georges clos des argillieres,2,47.1368,4.9523
+nuits saint georges clos des corvees,7,47.1338,4.9438410000000007
+nuits saint georges clos des porrets saint georges,7,47.1379,4.9502999999999995
+nuits saint georges la richemone,2,47.1351,4.950407
+nuits saint georges les chaboeufs,1,47.1405,4.9505
+nuits saint georges les crots,1,47.1398,4.951
+nuits saint georges les damodes,9,47.153000000000006,4.942999999999999
+nuits saint georges les hauts pruliers,1,47.1325,4.9464
+nuits saint georges les perrieres,3,47.11729,4.950832
+nuits saint georges les poulettes,4,47.1525,4.944
+nuits saint georges les pruliers,6,47.132,4.945999999999999
+nuits saint georges les saints georges,2,47.137,4.9509
+nuits saint georges les vaucrains,5,47.1398,4.95
+nuits saint georges premier cru,35,47.13599999999998,4.950999999999996
+nuits saint georges rue de chaux,5,47.1381,4.9504
+palette,3,43.5278,5.4432
+pauillac,236,45.191720268700344,-0.7539020556638387
+pays dherault,64,43.56667000000002,3.416670000000003
+pernand vergelesses,8,47.0573,4.8458
+pernand vergelesses ile des vergelesses,4,47.0575,4.8625
+pernand vergelesses les fichots,3,47.058,4.863
+pernand vergelesses premier cru,9,47.06193958871009,4.847139445349094
+pessac leognan,282,44.80321000000003,-0.5943200000000016
+pezenas,15,43.466670000000015,3.416669999999999
+pic saint loup,120,43.8000000000001,3.850000000000008
+pomerol,183,44.9333645153018,-0.20521169980285275
+pommard,83,46.96660348942171,4.793099273975613
+pommard 1er cru les epenots,2,46.2387,4.7075 
+pommard premier cru,20,46.95422527651918,4.792666776908167
+premieres cotes de bordeaux,2,44.68271522872525,-0.535035966266340197
+provence,12,43.9359,6.0676
+puisseguin saint emilion,26,44.55280000000001,0.04190000000000002
+puligny montrachet premier cru,2,44.860885,4.70357
+rasteau,20,44.19123000000001,4.845669999999999
+regnie,20,46.267889999999994,4.731229999999998
+reuilly,2,44.12284,1.9149
+rhone,2,45.0,4.75
+richebourg,15,47.1442,4.9602
+romanee saint vivant,10,47.145822799999999,4.9575
+rully,23,46.842,4.743399999999998
+rully champs cloux,5,46.8452,4.7398
+rully cloux,1,46.8691,4.7695
+rully marissou,3,46.8653,4.7723
+rully preaux,2,46.87097,4.74876
+rully premier cru,2,46.8699,4.7478
+saint amour,17,46.25432,4.636539999999998
+saint aubin,1,46.9351,4.7439
+saint aubin derriere chez edouard,3,46.93449999999999,4.7446
+saint aubin le puits,1,46.9355,4.745
+saint chinian,56,43.43333,2.949999999999999
+saint drezery,3,43.56432,3.83456
+saint emilion,66,44.90000000000005,-0.1500000000000002
+saint georges saint emilion,11,44.55219999999999,-0.13450000000000004
+saint guilhem le desert,17,43.73333000000002,3.549999999999999
+saint joseph,135,45.09011999999991,4.8076500000000015
+saint julien,171,45.15179999999986,-0.747
+saint nicolas de bourgueil,31,47.29929189869924,0.10155925574189303
+saint romain,11,46.9724,4.730800000000001
+sainte foy bordeaux,8,44.83333,0.0
+sancerre,48,47.31909999999999,2.8297599999999967
+santenay,48,46.91470624472586,4.696211376851372
+santenay beauregard,8,46.91588000000001,4.69892
+santenay clos de tavannes,4,46.9125,4.6985
+santenay clos des mouches,3,46.9109,4.6934
+santenay clos faubard,2,46.914,4.699
+santenay clos rousseau,6,46.9099,4.6911
+santenay grand clos rousseau,2,46.911,4.6925
+santenay la comme,4,46.9178,4.7
+santenay la maladiere,6,46.9146,4.6992
+santenay les gravieres,15,46.9121,4.701149999999999
+santenay premier cru,7,46.91534630302643,4.702978923364671
+saumur,24,47.26666999999998,-0.06667
+saumur champigny,139,47.24640293718296,-0.07620646471989473
+savigny les beaune,53,47.05789999999997,4.815400000000005
+savigny les beaune aux clous,4,47.0583,4.8201
+savigny les beaune aux fourneaux,4,47.05395,4.82703
+savigny les beaune aux gravains,1,47.0588,4.8278
+savigny les beaune aux guettes,9,47.05721,4.828119999999999
+savigny les beaune aux serpentieres,3,47.05859999999999,4.8293
+savigny les beaune la dominode,13,47.0593,4.822699999999999
+savigny les beaune les haut jarrons,1,47.06043,4.82585
+savigny les beaune les jarrons,1,47.0629,4.8208
+savigny les beaune les lavieres,8,47.059,4.82496
+savigny les beaune les narbantons,3,47.0585,4.8265
+savigny les beaune les peuillets,12,47.0541,4.8313
+savigny les beaune les talmettes,2,47.05321,4.82691
+savigny les beaune les vergelesses,7,47.05344000000001,4.82876
+savigny les beaune premier cru,7,47.05630000000001,4.8243
+sommieres,7,43.90623,4.10231
+southern rhone,12,44.300000000000004,4.799999999999999
+southwest,1,44.0,1.0
+st emilion grand cru,392,44.9240,–0.1555
+touraine,24,47.29999999999998,0.6999999999999997
+touraine amboise,7,47.41234000000001,0.9678899999999999
+upper loire,2,47.5,2.0
+vacqueyras,37,44.12728381735132,4.806080074188466
+valencay,1,47.15,1.56667
+vallee du paradis,1,42.38761,2.89973
+vin de pays doc,161,43.61193999999985,3.8772200000000017
+vin de pays vignobles de france,1,46.60335,1.88833
+vin de savoie,17,45.65,6.10
+vinsobres,13,44.3163,5.0984
+volnay,36,46.94370000000002,4.764999999999997
+volnay carelle sous la chapelle,1,46.9445,4.764
+volnay champans,7,46.94312000000001,4.765990000000001
+volnay clos de l audignac,3,46.943000000000005,4.7649
+volnay clos de la barre,2,46.9436,4.7648
+volnay clos de la bousse d or,1,46.9436,4.766
+volnay clos de la cave des ducs,1,46.9441,4.766
+volnay clos des 60 ouvrees,1,46.9440,4.764596
+volnay clos des chenes,4,46.9428,4.766
+volnay en chevret,7,46.94400000000001,4.7648
+volnay fremiets,15,46.9438,4.7643
+volnay la gigotte,1,46.9423,4.7629
+volnay le ronceret,2,46.9428,4.7661
+volnay le village,1,46.9431,4.7644
+volnay les angles,2,46.9435,4.7653
+volnay les brouillards,2,46.9453,4.765
+volnay les caillerets,12,46.944759999999995,4.76509
+volnay les lurets,2,46.9444,4.7664
+volnay les mitans,4,46.9441,4.7641
+volnay pitures dessus,4,46.9439,4.765
+volnay premier cru,40,46.94419999999997,4.765800000000004
+volnay robardelle,2,46.9425,4.7653
+volnay santenots,17,46.94087000000001,4.77358
+volnay taille pieds,6,46.94623000000001,4.76551
+vosne romanee,48,47.09369999999995,4.571599999999997
+vosne romanee 1er cru au cros parantoux,2,47.0937,4.5716
+vosne romanee aux brulees,4,47.0937,4.5716
+vosne romanee aux malconsorts,2,47.0937,4.5716
+vosne romanee aux raignots,1,47.0937,4.5716
+vosne romanee clos des reas,1,47.0937,4.5716
+vosne romanee la croix rameau,1,47.0937,4.5716
+vosne romanee les beaux monts,10,47.093700000000005,4.571600000000001
+vosne romanee les chaumes,10,47.093700000000005,4.571600000000001
+vosne romanee les gaudichots,3,47.09369999999999,4.5716
+vosne romanee les petits monts,1,47.0937,4.5716
+vosne romanee les suchots,10,47.093700000000005,4.571600000000001
+vosne romanee premier cru,28,47.09369999999998,4.571600000000003
+vougeot clos de la perriere,4,47.071113,4.710337
+vougeot les cras,6,46.919473,4.755843
+vougeot les petits vougeots,5,47.1671,4.9593
