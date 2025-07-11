@@ -1,2 +1,12 @@
-data/weather/
-data/weather_pq/
+# Données météo et dérivées
+data/weather*/
+data/weather_by_year/
+data/weather_features/
+data/Usable_station_per_department_2010_2023/
+
+# Shapefile AOC complet
+data/2025-07-01-delim-parcellaire-aoc-shp/
+
+
+# Notebooks
+*.ipynb
