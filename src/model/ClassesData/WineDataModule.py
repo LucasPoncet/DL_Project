@@ -1,58 +1,62 @@
-from __future__ import annotations
-
-from pathlib import Path
-from typing import Sequence
-
+import os, pandas as pd, torch
 import torch
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import TensorDataset
+from category_encoders import OneHotEncoder            # pip install category_encoders
 
-from ClassesData.WineDataset import WineDataset
-
-
-class WineDataModule:
-    """DataLoader helper (inspiré du DataModule PyTorch-Lightning)."""
-
+class DatasetLoader:
     def __init__(
         self,
-        parquet_path: str | Path,
-        cont_cols: Sequence[str],
-        cat_cols: Sequence[str],
-        batch_size: int = 256,
-        val_split: float = 0.1,
-        test_split: float = 0.1,
-        num_workers: int = 0,
-        seed: int = 42,
-    ) -> None:
-        full_ds = WineDataset(parquet_path, cont_cols, cat_cols)
-        n_total = len(full_ds)
-        n_val = int(n_total * val_split)
-        n_test = int(n_total * test_split)
-        n_train = n_total - n_val - n_test
+        root: str,
+        target_col: str = "label",
+        num_cols: list[str] | None = None,
+        onehot_cols: list[str] = ["region", "station", "cepage"],  # ← add cepage
+        valid_frac: float = 0.2,
+        dtype: torch.dtype = torch.float32,
+    ):
+        self.root, self.target_col = root, target_col
+        self.num_cols, self.onehot_cols = num_cols, onehot_cols
+        self.valid_frac, self.dtype = valid_frac, dtype
+        self.oh: OneHotEncoder | None = None
+        self.onehot_dim: int = 0
 
-        self.train_ds, self.val_ds, self.test_ds = random_split(
-            full_ds,
-            [n_train, n_val, n_test],
-            generator=torch.Generator().manual_seed(seed),
+    # -------------------------------------------------------------- #
+    def load_tabular_data(self):
+        train_valid = pd.read_parquet(os.path.join(self.root, "train_valid.parquet"))
+        test        = pd.read_parquet(os.path.join(self.root, "test.parquet"))
+
+        # choose numeric cols automatically if None
+        if self.num_cols is None:
+            excluded = set(self.onehot_cols + [self.target_col])
+            self.num_cols = [c for c in train_valid.columns if c not in excluded]
+
+        # train/valid split
+        if "split" in train_valid.columns:
+            train_df = train_valid[train_valid["split"] == "train"].copy()
+            valid_df = train_valid[train_valid["split"] == "valid"].copy()
+        else:
+            train_df = train_valid.sample(frac=1 - self.valid_frac, random_state=42)
+            valid_df = train_valid.drop(train_df.index)
+
+        # ── fit OneHotEncoder on train split ─────────────────────────
+        self.oh = OneHotEncoder(cols=self.onehot_cols, handle_unknown="ignore", use_cat_names=True)
+        self.oh.fit(train_df[self.onehot_cols])
+        self.onehot_dim = len(self.oh.get_feature_names_out())
+
+        # helper to transform a dataframe → tensors
+        def df_to_ds(df: pd.DataFrame) -> TensorDataset:
+            x_num    = torch.tensor(df[self.num_cols].values,             dtype=self.dtype)
+            x_1hot   = torch.tensor(self.oh.transform(df[self.onehot_cols]).values, # type: ignore
+                                   dtype=self.dtype)
+            y        = torch.tensor(df[self.target_col].values, dtype=torch.long)
+            return TensorDataset(x_num, x_1hot, y)
+
+        train_ds = df_to_ds(train_df)
+        valid_ds = df_to_ds(valid_df)
+        test_ds  = df_to_ds(test)
+
+        meta = dict(
+            num_dim   = len(self.num_cols),
+            onehot_dim= self.onehot_dim,        # region + station + cepage dummies
         )
-
-        self.batch_size = batch_size
-        self.num_workers = num_workers
-
-    # ------------------------------------------------------------------ #
-    def _loader(self, ds, shuffle: bool) -> DataLoader:
-        return DataLoader(
-            ds,
-            batch_size=self.batch_size,
-            shuffle=shuffle,
-            num_workers=self.num_workers,
-            pin_memory=True,
-        )
-
-    def train_dataloader(self) -> DataLoader:
-        return self._loader(self.train_ds, shuffle=True)
-
-    def val_dataloader(self) -> DataLoader:
-        return self._loader(self.val_ds, shuffle=False)
-
-    def test_dataloader(self) -> DataLoader:
-        return self._loader(self.test_ds, shuffle=False)
+        n_classes = int(train_valid[self.target_col].nunique())
+        return train_ds, valid_ds, test_ds, meta, n_classes
