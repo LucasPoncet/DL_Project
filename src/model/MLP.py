@@ -70,8 +70,8 @@ hyperparameters = {
     "dropout_rate": 0.1,
     "output_dim": n_classes,
     "num_numeric_features": len(num_cols),
-    "learning_rate": 0.001,
-    "max_epoch": 500,
+    "learning_rate": 0.0001,
+    "max_epoch": 1000,
 }
 
 embedding_sizes = {
@@ -80,7 +80,7 @@ embedding_sizes = {
     'cepages': (num_cepages, 8)
 }
 model = TabularMLP(hyperparameters, embedding_sizes).to(device)
-scope = ScopeClassifier(model, hyperparameters)
+scope = ScopeClassifier(model, hyperparameters,steps_per_epoch=len(train_loader))
 
 # ---------- 6. Balanced loss -------------------------------------------
 cnt = Counter(y_train.cpu().numpy())
@@ -88,6 +88,7 @@ total = len(y_train)
 weights = [total / cnt[cls] for cls in [0, 1]]
 criterion = torch.nn.CrossEntropyLoss(weight=torch.tensor(weights).to(device))
 scope.criterion = criterion
+
 
 # ---------- 7. Trainer workflow ----------------------------------------
 trainer = TrainerClassifier(hyperparameter=hyperparameters)
@@ -188,5 +189,5 @@ print(f"🌟 LGBM Test F1 Score:  {lgbm_test_f1:.4f}\n")
 print(classification_report(y_test_np, lgbm_test_preds))
 
 # Save the model
-torch.save(model.state_dict(), "models/mlp_wine_quality.pth")
-print("Model saved to 'models/mlp_wine_quality.pth'")
+# torch.save(model.state_dict(), "models/mlp_wine_quality.pth")
+# print("Model saved to 'models/mlp_wine_quality.pth'")

@@ -2,15 +2,25 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from ClassesML.EarlyStopper import EarlyStopper
+from torch.optim.lr_scheduler import OneCycleLR
+
+
 
 class ScopeClassifier:
-    def __init__(self, model, hyperparameters):
+    def __init__(self, model, hyperparameters,steps_per_epoch = None):
         self.criterion = nn.CrossEntropyLoss()
-        self.optimizer = optim.Adam(model.parameters(), lr=hyperparameters["learning_rate"])
+        self.optimizer = optim.Adam(model.parameters(), lr=hyperparameters["learning_rate"], weight_decay=1e-5)
         if "patience_lr" in hyperparameters:
             self.scheduler = ReduceLROnPlateau(self.optimizer, mode='max',
                                                patience=hyperparameters["patience_lr"],
-                                               factor = 0.1)
+                                               factor=0.1)
+        elif "cycle_lr" in hyperparameters:
+            self.scheduler = OneCycleLR(
+                self.optimizer,
+                max_lr=hyperparameters["cycle_lr"],
+                steps_per_epoch=steps_per_epoch,
+                epochs=hyperparameters["max_epoch"]
+            )
         else:
             self.scheduler = None
         
@@ -18,6 +28,7 @@ class ScopeClassifier:
             self.early_stopping = EarlyStopper(hyperparameters=hyperparameters)
         else:
             self.early_stopping = None
+        
 
 class ScopeAutoEncoder:
     def __init__(self, model, hyperparameters):
