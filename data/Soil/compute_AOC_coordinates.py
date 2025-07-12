@@ -42,7 +42,7 @@ with tqdm(total=len(steps), desc="Overall Progress", bar_format="{l_bar}{bar} {n
     # 5. Simplify geometries with inner progress
     pbar.set_description(steps[4])
     aoc_dissolved["geometry"] = aoc_dissolved["geometry"].progress_apply(
-        lambda geom: geom.simplify(tolerance=40, preserve_topology=True)
+        lambda geom: geom.simplify(tolerance = 40, preserve_topology=True)
     )
     pbar.update(1)
 
