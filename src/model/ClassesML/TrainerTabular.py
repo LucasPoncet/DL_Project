@@ -1,92 +1,107 @@
+# ClassesML/TrainerTabular.py
 import torch
-
-from Utils.Utilities import Utilities
+from torch.utils.data import TensorDataset, DataLoader
+from Utils.Utilities import Utilities            # keep your helper
 
 class TrainerClassifier:
-
     def __init__(self, hyperparameter):
-        self.hyperparameter = hyperparameter
+        self.hp = hyperparameter         # shorthand
 
+    # setters stay the same ----------------------------------------------
     def set_model(self, model, device):
-        self.model = model
-        self.device=device
+        self.model, self.device = model, device
 
     def set_scope(self, scope):
         self.scope = scope
 
-    def set_data(self, x_train, y_train, x_valid, y_valid) : 
-        self.x_train = x_train
-        self.x_valid = x_valid
-        self.y_train = y_train
-        self.y_valid = y_valid
+    def set_data(self, x_train, y_train, x_valid, y_valid):
+        # we keep the raw tensors but immediately wrap them in DataLoaders
+        bs = self.hp.get("batch_size", 512)
 
-    def run(self):
-        print("Starting training loop...")
-        train_accuracy_dict = {}
-        valid_accuracy_dict = {}
-        for epoch in range(self.hyperparameter["max_epoch"]):
+        if isinstance(x_train, (tuple, list)):
+            self.train_loader = DataLoader(
+                TensorDataset(*x_train, y_train),
+                batch_size=bs,
+                shuffle=True,
+                drop_last=False,
+            )
+            self.valid_loader = DataLoader(
+                TensorDataset(*x_valid, y_valid),
+                batch_size=bs * 2,
+                shuffle=False,
+            )
+        else:
+            self.train_loader = DataLoader(
+                TensorDataset(x_train, y_train),
+                batch_size=bs,
+                shuffle=True,
+                drop_last=False,
+            )
+            self.valid_loader = DataLoader(
+                TensorDataset(x_valid, y_valid),
+                batch_size=bs * 2,
+                shuffle=False,
+            )
+
+
+    # --------------------------------------------------------------------
+    def _epoch_loop(self, loader, train_phase=True):
+        if train_phase:
             self.model.train()
-            total_loss = 0
-            total_accuracy = 0
-            n_batch = len(self.x_train)
-            print("Number of training samples:", len(self.x_train))
-            print("Shape of first x_train:", self.x_train[0].shape)
-            print("Shape of first y_train:", self.y_train[0].shape)
-            for n in range(n_batch):
-                x = self.x_train[n].to(self.device)
-                y = self.y_train[n].to(self.device)
-                #Forward pass
-                y_hat = self.model(x)
-                #Compute loss
-                loss = self.scope.criterion(y_hat, y)
-                print("Loss:", loss.item())
-                #Backward pass
+        else:
+            self.model.eval()
+
+        total_loss = total_correct = total_samples = 0
+
+        for x_num, x_cat, y in loader:
+            x_num, x_cat, y = x_num.to(self.device), x_cat.to(self.device), y.to(self.device)
+            y_hat = self.model(x_num, x_cat)
+
+            loss  = self.scope.criterion(y_hat, y)
+
+            if train_phase:
                 self.scope.optimizer.zero_grad()
                 loss.backward()
                 self.scope.optimizer.step()
-                total_loss += loss.item()
-                #Compute accuracy
-                batch_accuracy = Utilities.compute_accuracy(y, y_hat)
-                total_accuracy += batch_accuracy
-            train_loss = total_loss / n_batch
-            train_accuracy = total_accuracy / n_batch
-            print("Epoch : "+ str(epoch+1) + " / " + str(self.hyperparameter["max_epoch"]))
-            print("Train loss : " + str(train_loss) + " - Train accuracy : " + str(train_accuracy))
 
-            #Validation
-            self.model.eval()
-            total_loss = 0
-            total_accuracy = 0
-            n_batch = len(self.x_valid)
-            for n in range(n_batch):
-                x = self.x_valid[n].to(self.device)
-                y = self.y_valid[n].to(self.device)
-                #Forward pass
-                y_hat = self.model(x)
-                #Compute loss
-                loss = self.scope.criterion(y_hat, y)
-                total_loss += loss.item()
-                #Compute accuracy
-                batch_accuracy = Utilities.compute_accuracy(y, y_hat)
-                total_accuracy += batch_accuracy
-            valid_loss = total_loss / n_batch
-            valid_accuracy = total_accuracy / n_batch
-            print("Epoch : "+ str(epoch+1) + " / " + str(self.hyperparameter["max_epoch"]))
-            print("Valid loss : " + str(valid_loss) + " - Valid accuracy : " + str(valid_accuracy))
+            # stats
+            total_loss    += loss.item() * y.size(0)            # sum over batch
+            total_correct += Utilities.compute_accuracy(y, y_hat, count=True)
+            total_samples += y.size(0)
+
+        avg_loss = total_loss / total_samples
+        avg_acc  = 100.0 * total_correct / total_samples
+        return avg_loss, avg_acc
+
+    # --------------------------------------------------------------------
+    def run(self):
+        print("Starting training loop…")
+        train_hist, valid_hist = [], []
+
+        for epoch in range(1, self.hp["max_epoch"] + 1):
+            tr_loss, tr_acc = self._epoch_loop(self.train_loader, train_phase=True)
+            va_loss, va_acc = self._epoch_loop(self.valid_loader, train_phase=False)
+
+            train_hist.append(tr_acc)
+            valid_hist.append(va_acc)
+
+            print(f"Epoch {epoch:2d}/{self.hp['max_epoch']}  "
+                  f"train: loss {tr_loss:.4f} | acc {tr_acc:.2f}%   "
+                  f"valid: loss {va_loss:.4f} | acc {va_acc:.2f}%")
+
+            # scheduler / early stopping (same logic as before)
             if self.scope.scheduler:
-                validation_metric = valid_accuracy
                 old_lr = self.scope.optimizer.param_groups[0]['lr']
-                self.scope.scheduler.step(validation_metric)
+                self.scope.scheduler.step(va_acc)
                 new_lr = self.scope.optimizer.param_groups[0]['lr']
                 if old_lr != new_lr:
-                    print(f"Learning rate changed from {old_lr} to {new_lr} at epoch {epoch}")
+                    print(f"LR change: {old_lr} → {new_lr} at epoch {epoch}")
+
                 if self.scope.early_stopping:
-                    keep_training = self.scope.early_stopping.set(model=self.model, epoch=epoch, metric_epoch=valid_accuracy)
-                    if not keep_training:
+                    if not self.scope.early_stopping.set(self.model, epoch, va_acc):
                         print("Early stopping triggered.")
                         break
-            train_accuracy_dict[epoch] = train_accuracy
-            valid_accuracy_dict[epoch] = valid_accuracy
-        train_accuracy_list = [train_accuracy_dict[i] for i in range(self.hyperparameter["max_epoch"])]
-        valid_accuracy_list = [valid_accuracy_dict[i] for i in range(self.hyperparameter["max_epoch"])]
-        return train_accuracy_list, valid_accuracy_list
+        best_epoch = int(torch.tensor(valid_hist).argmax()) + 1
+        print(f"\nBest validation accuracy: {max(valid_hist):.2f}% at epoch {best_epoch}")
+
+        return train_hist, valid_hist

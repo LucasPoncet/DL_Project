@@ -29,19 +29,7 @@ class Utilities:
 
     # Facultatif : petite fonction d’accuracy si besoin ailleurs.
     @staticmethod
-    def compute_accuracy(y_true, y_pred_logits) -> float:
-        """
-        Exactitude top-1 pour classification multiclasse ou binaire logits.
-        """
-        if not isinstance(y_true, torch.Tensor):
-            y_true = torch.as_tensor(y_true)
-        if not isinstance(y_pred_logits, torch.Tensor):
-            y_pred_logits = torch.as_tensor(y_pred_logits)
-
-        if y_pred_logits.dim() > 1 and y_pred_logits.size(1) > 1:
-            _, preds = torch.max(y_pred_logits, 1)
-        else:  # sigmoid/binary logits
-            preds = (torch.sigmoid(y_pred_logits) >= 0.5).long().view(-1)
-
-        correct = (preds == y_true.view(-1)).sum().item()
-        return correct / y_true.numel() * 100.0
+    def compute_accuracy(y_true, y_logits, count=False):
+        preds = y_logits.argmax(dim=1)
+        correct = (preds == y_true).sum().item()
+        return correct if count else 100.0 * correct / y_true.size(0)

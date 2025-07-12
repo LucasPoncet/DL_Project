@@ -21,7 +21,7 @@ class MLP(nn.Module):
 
         self.layers= nn.ModuleList()
 
-        layer = FlattenDenseBlock(in_size=self.input_dim, out_size=self.hidden_layers_size[0],
+        layer = DenseBlock(in_size=self.input_dim, out_size=self.hidden_layers_size[0],
                                   activation=Utilities.get_activation(self.activation),
                                   batch_normalization=self.batch_normalization,
                                   dropout_rate=self.dropout_rate)
