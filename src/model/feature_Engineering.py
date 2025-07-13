@@ -11,7 +11,6 @@ _NUM_FEATS = {
     "C": ("hot_day_intensity",    ["hot_days", "TX_summer"]),
     "D": ("frost_risk_index",     ["frost_days_Apr", "avg_TM_Apr"]),
     "E": ("price_per_heat_unit",  ["price", "GDD"]),
-    "F": ("rating_per_price",     ["wine_rating", "price"]),
     "I": ("log_price",            ["price"]),
 }
 
@@ -35,8 +34,6 @@ def _compute_feature(letter: str, data_row: Dict[str, torch.Tensor]):
         return data_row["frost_days_Apr"] / (data_row["avg_TM_Apr"] + 1.0)
     if letter == "E":
         return data_row["price"] / (data_row["GDD"] + 1.0)
-    if letter == "F":
-        return data_row["wine_rating"] / (data_row["price"] + 1.0)
     if letter == "I":
         return torch.log1p(data_row["price"])
     raise ValueError(f"Unsupported numeric feature ID: {letter}")
@@ -112,3 +109,23 @@ def add_engineered_features(
     new_cat_cols = cat_cols + [_CAT_FEATS[l][0] for l in cat_ids]
 
     return tuple(new_datasets), new_num_cols, new_cat_cols
+
+def drop_columns(
+    datasets: Tuple[TensorDataset, ...],
+    num_cols: List[str],
+    drop_list: List[str],
+) -> Tuple[Tuple[TensorDataset, ...], List[str]]:
+    """
+    Remove the numeric columns in `drop_list` from every TensorDataset.
+    Categorical columns are left untouched.
+    """
+    keep_idx = [i for i, name in enumerate(num_cols) if name not in drop_list]
+    new_num_cols = [num_cols[i] for i in keep_idx]
+
+    new_datasets = []
+    for ds in datasets:
+        x_num, x_cat, y = ds.tensors
+        x_num = x_num[:, keep_idx]           # slice out unwanted cols
+        new_datasets.append(TensorDataset(x_num, x_cat, y))
+
+    return tuple(new_datasets), new_num_cols

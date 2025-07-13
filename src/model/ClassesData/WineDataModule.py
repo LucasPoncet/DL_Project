@@ -11,7 +11,7 @@ class DatasetLoader:
         test_path: str,
         target_col: str = "label",
         num_cols: Optional[list[str]] = None,
-        cat_cols: list[str] = ["region", "station", "cepage"],
+        cat_cols: Optional[list[str]] = None,
         valid_frac: float = 0.2,
         dtype: torch.dtype = torch.float32,
     ):
@@ -32,10 +32,11 @@ class DatasetLoader:
         train_valid = pd.read_parquet(self.train_path)
         test        = pd.read_parquet(self.test_path)
 
-        if self.num_cols is None:
+        if self.num_cols is None and self.cat_cols:
             excluded = set(self.cat_cols + [self.target_col])
             self.num_cols = [c for c in train_valid.columns if c not in excluded]
-
+        elif self.cat_cols is None and self.num_cols is None:
+            raise ValueError("At least one of num_cols or cat_cols must be provided.")
         # train/valid split
         if "split" in train_valid.columns:
             train_df = train_valid[train_valid["split"] == "train"].copy()
