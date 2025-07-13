@@ -42,21 +42,22 @@ class TrainerClassifier:
                 batch_size=bs * 2,
                 shuffle=False,
             )
+        
+    def set_data_loaders(self, train_loader, valid_loader):
+        self.train_loader = train_loader
+        self.valid_loader = valid_loader
 
 
     # --------------------------------------------------------------------
     def _epoch_loop(self, loader, train_phase=True):
-        if train_phase:
-            self.model.train()
-        else:
-            self.model.eval()
+        self.model.train() if train_phase else self.model.eval()
 
         total_loss = total_correct = total_samples = 0
+        for *features, y in loader:                    # ← générique
+            features = [f.to(self.device) for f in features]
+            y = y.to(self.device)
 
-        for x_num, x_cat, y in loader:
-            x_num, x_cat, y = x_num.to(self.device), x_cat.to(self.device), y.to(self.device)
-            y_hat = self.model(x_num, x_cat)
-
+            y_hat = self.model(*features)              # MLP : 2 tensors ; RNN : 3
             loss  = self.scope.criterion(y_hat, y)
 
             if train_phase:
@@ -64,14 +65,14 @@ class TrainerClassifier:
                 loss.backward()
                 self.scope.optimizer.step()
 
-            # stats
-            total_loss    += loss.item() * y.size(0)            # sum over batch
-            total_correct += Utilities.compute_accuracy(y, y_hat, count=True)
+            total_loss    += loss.item() * y.size(0)
+            total_correct += (y_hat.argmax(1) == y).sum().item()
             total_samples += y.size(0)
 
         avg_loss = total_loss / total_samples
         avg_acc  = 100.0 * total_correct / total_samples
         return avg_loss, avg_acc
+
 
     # --------------------------------------------------------------------
     def run(self):
