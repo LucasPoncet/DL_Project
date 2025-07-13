@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn 
 import torch.optim as optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
@@ -8,7 +9,7 @@ from torch.optim.lr_scheduler import OneCycleLR
 
 class ScopeClassifier:
     def __init__(self, model, hyperparameters,steps_per_epoch = None):
-        self.criterion = nn.CrossEntropyLoss()
+        self.criterion: torch.nn.Module = hyperparameters.get("criterion", nn.CrossEntropyLoss())
         self.optimizer = optim.Adam(model.parameters(), lr=hyperparameters["learning_rate"], weight_decay=1e-5)
         if "patience_lr" in hyperparameters:
             self.scheduler = ReduceLROnPlateau(self.optimizer, mode='max',

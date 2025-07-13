@@ -1,4 +1,5 @@
-import os, pandas as pd, torch
+import pandas as pd
+import torch
 from torch.utils.data import TensorDataset
 from typing import Optional
 
@@ -87,4 +88,4 @@ class DatasetLoader:
         test_ds  = df_to_ds(test)
 
         n_classes = int(train_valid[self.target_col].nunique())
-        return train_ds, valid_ds, test_ds, self.cat_mapping, None
+        return train_ds, valid_ds, test_ds, self.cat_mapping, n_classes

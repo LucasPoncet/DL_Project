@@ -183,3 +183,77 @@ class TransformerEncoderBlock(nn.Module):
         out = self.dropout2(out) # (B, S, D)
         return out
     
+
+class GhostBatchNorm(nn.Module):
+    def __init__(self, input_dim, virtual_batch_size= 64, momentum = 0.01):
+        super().__init__()
+        self.virtual_batch_size = virtual_batch_size
+        self.bn = nn.BatchNorm1d(input_dim, momentum=momentum)
+    
+    def forward(self, x):
+        if not self.training or x.size(0) <= self.virtual_batch_size:
+            return self.bn(x)
+        chunks = x.chunk(x.size(0) // self.virtual_batch_size, dim=0)
+        res = [self.bn(c) for c in chunks]
+        return torch.cat(res, dim=0)
+
+class FeatureTransformerBlock(nn.Module):
+    def __init__(self,input_dim, output_dim, n_glu_layers=2,
+                 dropout_rate=0.2, virtual_batch_size=64):
+        super().__init__()
+        self.blocks = nn.ModuleList()
+        for i in range(n_glu_layers):
+            in_dim = input_dim if i==0 else output_dim
+            self.blocks.append(nn.Sequential(
+                nn.Linear(in_dim, output_dim),
+                GhostBatchNorm(output_dim, virtual_batch_size),
+                nn.ReLU(),
+                nn.Dropout(dropout_rate)
+            ))
+        self.skip = (input_dim == output_dim)
+        self.residual = nn.Identity() if self.skip else nn.Linear(input_dim, output_dim)
+
+    def forward(self, x):
+        out = x
+        for blocks in self.blocks:
+            out = blocks(out)
+        out = out + self.residual(x)
+        return out
+    
+
+class Sparsemax(nn.Module):
+    def forward(self, input):
+        dim = -1
+        input = input - input.max(dim=dim, keepdim=True)[0]
+
+        z_sorted, _ = torch.sort(input, dim=dim, descending=True)
+        k = torch.arange(1, input.size(dim) + 1, device=input.device).view(1, -1)
+        k = k.expand_as(z_sorted)
+
+        z_cumsum = z_sorted.cumsum(dim)
+        support = (1 + k * z_sorted) > z_cumsum
+
+        k_max = support.sum(dim=dim, keepdim=True)
+
+        # Compute τ (threshold)
+        tau_sum = z_cumsum.gather(dim, k_max - 1)
+        tau = (tau_sum - 1) / k_max.float()
+
+        # Final projection
+        output = torch.clamp(input - tau, min=0)
+        return output
+
+
+
+class AttentiveTransformer(nn.Module):
+    def __init__(self, input_dim, output_dim, virtual_batch_size=128, momentum=0.01):
+        super().__init__()
+        self.fc = nn.Linear(input_dim, output_dim)
+        self.bn = GhostBatchNorm(output_dim, virtual_batch_size, momentum)
+        self.sparsemax = Sparsemax()
+
+    def forward(self, x, prior):
+        x = self.fc(x)
+        x = self.bn(x)
+        x = self.sparsemax(x)
+        return x * prior
