@@ -10,7 +10,7 @@ class DatasetLoader:
         test_path: str,
         target_col: str = "label",
         num_cols: Optional[list[str]] = None,
-        cat_cols: list[str] = ["region", "station", "cepage"],
+        cat_cols: list[str] = ["region", "station", "cepages"],
         valid_frac: float = 0.2,
         dtype: torch.dtype = torch.float32,
     ):
@@ -88,3 +88,46 @@ class DatasetLoader:
 
         n_classes = int(train_valid[self.target_col].nunique())
         return train_ds, valid_ds, test_ds, self.cat_mapping, None
+
+    def load_sequence_dataframe(self):
+        """
+        Retourne trois DataFrames (train / valid / test) encodés, plus les
+        listes utiles pour WineSeqDataset : num_cols, cat_cols et cat_mapping.
+        """
+        df_train_valid = pd.read_parquet(self.train_path)
+        df_test        = pd.read_parquet(self.test_path)
+
+        # Définition des colonnes numériques si absent
+        if self.num_cols is None:
+            excl = set(self.cat_cols + [self.target_col, 'year'])
+            self.num_cols = [c for c in df_train_valid.columns if c not in excl]
+
+        # Split temporel ou aléatoire (même logique que load_tabular_data)
+        if 'split' in df_train_valid.columns:
+            train_df = df_train_valid[df_train_valid['split'] == 'train'].copy()
+            valid_df = df_train_valid[df_train_valid['split'] == 'valid'].copy()
+        else:
+            train_df = df_train_valid.sample(frac=1 - self.valid_frac, random_state=42)
+            valid_df = df_train_valid.drop(train_df.index)
+
+        # ----------------------------------------------------------------
+        # Encodage des colonnes catégorielles en int64 pour les Embeddings du RNN
+        # ----------------------------------------------------------------
+        self.cat_mapping = self.create_index_mapping(df_train_valid, self.cat_cols)
+        for col in self.cat_cols:
+            for df in (train_df, valid_df, df_test):
+                df[col] = (
+                    df[col].fillna('__MISSING__')  # valeurs manquantes
+                        .map(self.cat_mapping[col])
+                        .fillna(0)                # inconnus -> 0
+                        .astype(int)
+                )
+
+        for df in (train_df, valid_df, df_test):
+            for col in self.num_cols:
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+
+        print(train_df[self.cat_cols].dtypes)
+
+        return train_df, valid_df, df_test, self.num_cols, self.cat_cols, self.cat_mapping
+
