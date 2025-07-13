@@ -54,6 +54,8 @@ Wine quality ratings scraped from Vivino:
 - Raw data: `data/Wine/vivino_wines.csv`
 - Regions metadata: `data/Wine/regions.csv`
 
+[🌐 Carte interactive des vins](data/out/wine_map.html)
+
 ---
 
 ## Quick Start
