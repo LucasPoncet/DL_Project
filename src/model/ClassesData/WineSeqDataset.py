@@ -73,11 +73,12 @@ class WineSeqDataset(Dataset):
 
         # Catégorielles → dernière ligne (millésime cible)
         last_row = window.iloc[-1]
-        x_cat = torch.tensor(int(last_row[self.cat_cols]).values, dtype=torch.long)
+        cat_vals = pd.Series(last_row[self.cat_cols]).fillna(-1).astype(int).values
+        x_cat = torch.tensor(cat_vals, dtype=torch.long)
 
         # Statique numérique (ex. price)
         if self.static_cols:
-            x_stat = torch.tensor(last_row[self.static_cols].values, dtype=torch.float32)
+            x_stat = torch.tensor(last_row[self.static_cols].values.astype(float), dtype=torch.float32)
         else:
             x_stat = torch.empty(0, dtype=torch.float32)
 
