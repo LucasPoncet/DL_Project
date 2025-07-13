@@ -12,6 +12,7 @@ from ClassesData.WineDataModule import DatasetLoader
 from ClassesML.TabularMLP       import TabularMLP
 from ClassesML.Scope            import ScopeClassifier
 from ClassesML.TrainerTabular   import TrainerClassifier
+from feature_Engineering import add_engineered_features
 from sklearn.metrics import accuracy_score, f1_score, classification_report
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -39,6 +40,15 @@ loader = DatasetLoader(
 
 train_ds, valid_ds, test_ds, onehot_mapping, _ = loader.load_tabular_data()
 
+# Add engineered features to the datasets
+feature_ids = ["B", "A", "D", "I", "K"]     # diurnal-range, heat/rain, etc.
+
+(train_ds, valid_ds, test_ds), num_cols, cat_cols = add_engineered_features(
+    datasets   =(train_ds, valid_ds, test_ds),
+    num_cols   = num_cols,
+    cat_cols   = cat_cols,
+    feature_ids= feature_ids,
+)
 # ---------- 2. Clean numerical data (nan / inf) ------------------------
 for ds in (train_ds, valid_ds):
     x_num = torch.nan_to_num(ds.tensors[0], nan=0.0, posinf=0.0, neginf=0.0)
