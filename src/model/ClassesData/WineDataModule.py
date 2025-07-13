@@ -18,6 +18,8 @@ class DatasetLoader:
         self.num_cols, self.cat_cols = num_cols, cat_cols
         self.valid_frac, self.dtype = valid_frac, dtype
         self.cat_mapping: Optional[dict[str, dict[str, int]]] = None
+        self._num_mean = None
+        self._num_std  = None
 
     # -------------------------------------------------------------- #
     def create_index_mapping(self, df, categorical_columns):
@@ -42,6 +44,9 @@ class DatasetLoader:
         else:
             train_df = train_valid.sample(frac=1 - self.valid_frac, random_state=42)
             valid_df = train_valid.drop(train_df.index)
+        
+        self._num_mean = train_df[self.num_cols].mean()
+        self._num_std  = train_df[self.num_cols].std().replace(0, 1)
 
         # compute mapping before encoding
         self.cat_mapping = self.create_index_mapping(train_valid, self.cat_cols)
@@ -58,9 +63,15 @@ class DatasetLoader:
             if self.num_cols:
                 for col in self.num_cols:
                     df[col] = pd.to_numeric(df[col], errors='coerce')
-                df[self.num_cols] = df[self.num_cols].fillna(df[self.num_cols].mean())
+                    
+                df[self.num_cols] = (df[self.num_cols] - self._num_mean) / self._num_std
+
+                df[self.num_cols] = df[self.num_cols].fillna(0)
+                
                 x_num = torch.tensor(df[self.num_cols].values, dtype=self.dtype)
                 x_num = _clean(x_num)
+                
+                
             else:
                 x_num = torch.empty((len(df), 0), dtype=self.dtype)
 
@@ -69,7 +80,7 @@ class DatasetLoader:
                 df[col] = df[col].fillna('__MISSING__')
 
             x_cat = df[self.cat_cols].copy()
-            assert self.cat_mapping is not None  # 🔒 protection
+            assert self.cat_mapping is not None  
 
             for col in self.cat_cols:
                 x_cat[col] = x_cat[col].map(self.cat_mapping[col]).fillna(0).astype(int)
