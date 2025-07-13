@@ -1,7 +1,8 @@
 # ClassesML/TrainerTabular.py
 import torch
 from torch.utils.data import TensorDataset, DataLoader
-from Utils.Utilities import Utilities            # keep your helper
+from Utils.Utilities import Utilities
+from torch.optim.lr_scheduler import OneCycleLR, ReduceLROnPlateau
 
 class TrainerClassifier:
     def __init__(self, hyperparameter):
@@ -63,6 +64,8 @@ class TrainerClassifier:
                 self.scope.optimizer.zero_grad()
                 loss.backward()
                 self.scope.optimizer.step()
+                if isinstance(self.scope.scheduler, OneCycleLR):
+                    self.scope.scheduler.step()
 
             # stats
             total_loss    += loss.item() * y.size(0)            # sum over batch
@@ -101,6 +104,17 @@ class TrainerClassifier:
                     if not self.scope.early_stopping.set(self.model, epoch, va_acc):
                         print("Early stopping triggered.")
                         break
+
+            if isinstance(self.scope.scheduler, ReduceLROnPlateau):
+                old_lr = self.scope.optimizer.param_groups[0]['lr']
+                self.scope.scheduler.step(va_acc)            # needs metric
+                new_lr = self.scope.optimizer.param_groups[0]['lr']
+                if old_lr != new_lr:
+                    print(f"LR change: {old_lr:.2e} → {new_lr:.2e} at epoch {epoch}")
+
+            if self.scope.early_stopping and not self.scope.early_stopping.set(self.model, epoch, va_acc):
+                print("Early stopping triggered.")
+                break
         best_epoch = int(torch.tensor(valid_hist).argmax()) + 1
         print(f"\nBest validation accuracy: {max(valid_hist):.2f}% at epoch {best_epoch}")
 

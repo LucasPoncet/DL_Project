@@ -6,9 +6,10 @@ class EarlyStopper:
         self.hyperparameters=hyperparameters
         self.max_epoch=self.hyperparameters["max_epoch"]
         self.metric_epochs = []
-        self.min_epoch = 10
-        self.early_stopping_patience = 10
+        self.min_epoch = self.hyperparameters.get("min_epoch_es", 10)
+        self.early_stopping_patience = self.hyperparameters.get("patience_es", 10)
         self.best_model_weights = None
+        self.wait = 0 
 
     def set(self, model, epoch, metric_epoch):
         keep_training = True
@@ -38,4 +39,5 @@ class EarlyStopper:
     def _keep_weights(self, model):
         self.best_model_weights = model.state_dict().copy()
     def _restore_weights(self, model):
-        model.load_state_dict(self.best_model_weights)
+        if self.best_model_weights is not None:
+            model.load_state_dict(self.best_model_weights)

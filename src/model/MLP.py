@@ -12,6 +12,7 @@ from ClassesData.WineDataModule import DatasetLoader
 from ClassesML.TabularMLP       import TabularMLP
 from ClassesML.Scope            import ScopeClassifier
 from ClassesML.TrainerTabular   import TrainerClassifier
+from feature_Engineering import add_engineered_features
 from sklearn.metrics import accuracy_score, f1_score, classification_report
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -39,6 +40,15 @@ loader = DatasetLoader(
 
 train_ds, valid_ds, test_ds, onehot_mapping, _ = loader.load_tabular_data()
 
+# Add engineered features to the datasets
+feature_ids = ["B", "A", "D", "I", "K"]     # diurnal-range, heat/rain, etc.
+
+(train_ds, valid_ds, test_ds), num_cols, cat_cols = add_engineered_features(
+    datasets   =(train_ds, valid_ds, test_ds),
+    num_cols   = num_cols,
+    cat_cols   = cat_cols,
+    feature_ids= feature_ids,
+)
 # ---------- 2. Clean numerical data (nan / inf) ------------------------
 for ds in (train_ds, valid_ds):
     x_num = torch.nan_to_num(ds.tensors[0], nan=0.0, posinf=0.0, neginf=0.0)
@@ -71,7 +81,7 @@ hyperparameters = {
     "output_dim": n_classes,
     "num_numeric_features": len(num_cols),
     "learning_rate": 0.0001,
-    "max_epoch": 1000,
+    "max_epoch": 1500,
 }
 
 embedding_sizes = {
@@ -142,13 +152,15 @@ lgbm_acc = accuracy_score(y_valid_np, lgbm_pred)
 print("LGBM valid acc:", lgbm_acc)
 
 # ---------- 11. Inference on test set ----------------------------------
+TRESH = 0.50
 x_num_test, x_cat_test, y_test = test_ds.tensors
 with torch.no_grad():
     y_test_hat = model(x_num_test.to(device), x_cat_test.to(device))
     test_pred  = y_test_hat.argmax(dim=1).cpu().numpy()
 if test_pred.ndim > 1:
-    test_pred = (test_pred > 0.5).astype(int)
+    test_pred = (test_pred > TRESH).astype(int)
 
+print("Treshold:", TRESH)
 if isinstance(test_pred, torch.Tensor):
     test_pred = test_pred.cpu().numpy()
 if isinstance(y_test, torch.Tensor):
