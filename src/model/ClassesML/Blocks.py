@@ -198,7 +198,7 @@ class GhostBatchNorm(nn.Module):
         return torch.cat(res, dim=0)
 
 class FeatureTransformerBlock(nn.Module):
-    def __init__(self,input_dim, output_dim, n_glu_layers=2,
+    def _init_(self,input_dim, output_dim, n_glu_layers=2,
                  dropout_rate=0.2, virtual_batch_size=64):
         super().__init__()
         self.blocks = nn.ModuleList()
