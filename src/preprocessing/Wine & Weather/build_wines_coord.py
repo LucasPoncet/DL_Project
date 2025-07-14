@@ -38,9 +38,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------------
-# Utilitaires (identiques au notebook)
-# ---------------------------------------------------------------------------
 
 
 def normalize_string(txt: str) -> str:
@@ -58,10 +55,8 @@ def clean_wine_name(name: str) -> str:
     name = re.sub(r"\b(19|20)\d{2}\b", "", name.lower())
     return normalize_string(name)
 
-
-# ---------------------------------------------------------------------------
 # 1. AOC : fuzzy-matching + centroïdes + DÉ-DUP
-# ---------------------------------------------------------------------------
+
 
 
 def load_aoc(shp_path: Path, wine_csv: Path) -> pl.DataFrame:
@@ -82,7 +77,6 @@ def load_aoc(shp_path: Path, wine_csv: Path) -> pl.DataFrame:
         .str.replace("’", "'")
     )
 
-    # noms de vin uniques
     viv = pl.read_csv(wine_csv)
     region_list: List[str] = (
         viv.select("Wine").drop_nulls().unique().to_series().to_list()
@@ -93,7 +87,6 @@ def load_aoc(shp_path: Path, wine_csv: Path) -> pl.DataFrame:
 
     gdf = gdf[gdf["denom_clean"].apply(lambda x: match(x, region_list))].copy()
 
-    # reprojection → centroïde → WGS84
     gdf_metric = gdf.to_crs(epsg=2154)
     gdf_metric["centroid"] = gdf_metric.geometry.centroid
     gdf_cent = (
@@ -103,7 +96,6 @@ def load_aoc(shp_path: Path, wine_csv: Path) -> pl.DataFrame:
     gdf["lat"] = gdf_cent.geometry.y
     gdf["lon"] = gdf_cent.geometry.x
 
-    # ➜ DÉ-DUP : un seul point par denom_clean (moyenne lat/lon)
     aoc = (
         pl.from_pandas(gdf[["denom_clean", "lat", "lon"]])
         .group_by("denom_clean")
@@ -117,9 +109,9 @@ def load_aoc(shp_path: Path, wine_csv: Path) -> pl.DataFrame:
     return aoc
 
 
-# ---------------------------------------------------------------------------
-# 2. Vivino nettoyé
-# ---------------------------------------------------------------------------
+
+# 2. Vivino cleaning
+
 
 
 def load_vivino(csv: Path) -> pl.DataFrame:
@@ -135,9 +127,8 @@ def load_vivino(csv: Path) -> pl.DataFrame:
     return df
 
 
-# ---------------------------------------------------------------------------
-# 3. Jointure coords
-# ---------------------------------------------------------------------------
+
+# 3. Attach coordinates from AOC to Vivino wines
 
 
 def attach_coords(viv: pl.DataFrame, aoc: pl.DataFrame) -> pl.DataFrame:
@@ -158,9 +149,9 @@ def attach_coords(viv: pl.DataFrame, aoc: pl.DataFrame) -> pl.DataFrame:
     return viv
 
 
-# ---------------------------------------------------------------------------
-# 4. Barycentres
-# ---------------------------------------------------------------------------
+
+# 4. Centroids
+
 
 
 def centroids(df: pl.DataFrame) -> pl.DataFrame:
@@ -188,7 +179,7 @@ def inject_centroids(
                     .str.replace_all("-", " ").alias("region_clean")
 )
 
-    # -- 2) Lecture fichier barycentres avec pandas, nettoyage ----------------
+
     p_corr = pd.read_csv(corr_fp)
 
     # force minuscules / strip
@@ -199,7 +190,7 @@ def inject_centroids(
             .str.replace("-", " ")
     )
 
-    # nettoyage chiffres (on garde 0-9 + . + -)
+
     def num(x):
         return re.sub(r"[^\d\.\-]+", "", str(x))
 
@@ -211,7 +202,7 @@ def inject_centroids(
         .drop_nulls(["lat_corr", "lon_corr"])
     )
 
-    # -- 3) Jointure + remplacement -------------------------------------------
+
     viv_upd = viv.join(corr, on="region_clean", how="left")
 
     viv_upd = viv_upd.with_columns([
@@ -228,9 +219,9 @@ def inject_centroids(
     return viv_upd
 
 
-# ---------------------------------------------------------------------------
-# 5. Carte Plotly (APRES injection)
-# ---------------------------------------------------------------------------
+
+# 5. Plotly map
+
 
 
 def make_map(df: pl.DataFrame, out_html: Path):
@@ -254,9 +245,8 @@ def make_map(df: pl.DataFrame, out_html: Path):
     logger.info("Carte sauvegardée : %s", out_html)
 
 
-# ---------------------------------------------------------------------------
-# 6. Météo
-# ---------------------------------------------------------------------------
+# 6. Weather
+
 
 
 def attach_weather(
@@ -296,9 +286,7 @@ def attach_weather(
     (pl.concat(out) if out else df).write_csv(out_csv)
 
 
-# ---------------------------------------------------------------------------
-# 7. Récap
-# ---------------------------------------------------------------------------
+
 
 
 def recap(df: pl.DataFrame):
@@ -307,9 +295,6 @@ def recap(df: pl.DataFrame):
     logger.info("Récapitulatif : %d vins, %d avec coordonnées", n, n_coord)
 
 
-# ---------------------------------------------------------------------------
-# Chemins fixes
-# ---------------------------------------------------------------------------
 
 
 def parse_args():
@@ -322,10 +307,6 @@ def parse_args():
         output_dir=Path("data/out"),
     )
 
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
 
 
 def main():
@@ -341,18 +322,18 @@ def main():
     pl.col("latitude").cast(pl.Float64, strict=False),
     pl.col("longitude").cast(pl.Float64, strict=False),
 )
-    # barycentres + injection
+
     bary = centroids(viv)
     viv = inject_centroids(viv, bary, CORR_CENT_FP)
 
-    # exports intermédiaires
+
     viv.write_csv(args.output_dir / "vivino_with_coords_injected.csv")
     bary.write_csv(args.output_dir / "region_centroids.csv")
 
-    # carte APRES injection
+
     make_map(viv, args.output_dir / "wine_map.html")
 
-    # météo + export final
+
     attach_weather(
         viv, args.weather_dir, args.output_dir / "vivino_wines_with_weather_AOC.csv"
     )

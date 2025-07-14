@@ -8,7 +8,6 @@ class TabularMLP(nn.Module):
     def __init__(self, hyperparameters, embedding_sizes):
         super(TabularMLP, self).__init__()
 
-        # --- hyper‑parameters ------------------------------------------------
         self.hidden_layers_size = hyperparameters["hidden_layers_size"]
         self.activation         = Utilities.get_activation(hyperparameters["activation"])
         self.batch_normalization= hyperparameters["batch_normalization"]
@@ -16,15 +15,15 @@ class TabularMLP(nn.Module):
         num_numeric_features    = hyperparameters["num_numeric_features"]
         output_dim              = hyperparameters["output_dim"]
 
-        # --- embeddings (0‑N cats) -----------------------------------------
+
         self.emb_layers = nn.ModuleDict({
             name: nn.Embedding(vocab, dim) for name, (vocab, dim) in embedding_sizes.items()
         })
         emb_total_dim = sum(dim for (_, dim) in embedding_sizes.values())
 
-        # --- dense network ---------------------------------------------------
+
         total_input_dim = num_numeric_features + emb_total_dim
-        layers: list[nn.Module] = []  # explicit module list → avoids Pylance type clash
+        layers: list[nn.Module] = []  
         layers.append(
             DenseBlock(in_size=total_input_dim,
                        out_size=self.hidden_layers_size[0],
@@ -43,7 +42,6 @@ class TabularMLP(nn.Module):
         layers.append(nn.Linear(self.hidden_layers_size[-1], output_dim))
         self.classifier = nn.Sequential(*layers)
 
-    # ------------------------------------------------------------------
     def forward(self, x_numeric: torch.Tensor, x_cat: torch.Tensor):
         """Concatenate numeric features and (optional) embeddings then classify."""
         if self.emb_layers:

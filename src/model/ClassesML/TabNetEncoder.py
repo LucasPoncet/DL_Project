@@ -1,10 +1,8 @@
 import torch
 import torch.nn as nn 
-import numpy as np
-import math
 
-from ClassesML.Blocks import DenseBlock,GhostBatchNorm, FeatureTransformerBlock, Sparsemax, AttentiveTransformer
-from Utils.Utilities import Utilities
+from ClassesML.Blocks import FeatureTransformerBlock, AttentiveTransformer
+
 
 class TabNetEncoder(nn.Module):
     def __init__(self, input_dim, output_dim, n_steps=5,
@@ -14,13 +12,13 @@ class TabNetEncoder(nn.Module):
         self.input_dim = input_dim
         self.output_dim = output_dim
 
-        # Shared feature transformer (reused across steps)
+
         self.shared_feat_transform = nn.ModuleList([
             FeatureTransformerBlock(input_dim, output_dim, virtual_batch_size=virtual_batch_size)
             for _ in range(n_shared)
         ])
 
-        # Step-specific transformers and attention
+
         self.step_feat_transform = nn.ModuleList([
             nn.ModuleList([
                 FeatureTransformerBlock(output_dim, output_dim, virtual_batch_size=virtual_batch_size)
@@ -43,27 +41,27 @@ class TabNetEncoder(nn.Module):
         masked_x = x
         self.collected_masks = []
         for step in range(self.n_steps):
-            # Shared transformer
+            
             out = masked_x
             for block in self.shared_feat_transform:
                 out = block(out)
 
-            # Step-specific transformer
-            for block in self.step_feat_transform[step]:
+            
+            for block in self.step_feat_transform[step]: #type:ignore 
                 out = block(out)
 
-            # Save output from this step
+            
             outputs.append(out)
 
             if step < self.n_steps - 1:
-                # Compute attention mask
+                
                 mask = self.attentive_transformers[step](out, prior)
                 self.collected_masks.append(mask)
                 masked_x = mask * x
-                prior = prior * (1 - mask + 1e-5)  # avoid zero
+                prior = prior * (1 - mask + 1e-5) 
         if return_masks:
             return torch.stack(outputs, 0).sum(0), self.collected_masks
-        return torch.stack(outputs, dim=0).sum(dim=0)  # aggregation des outputs
+        return torch.stack(outputs, dim=0).sum(dim=0)  
 
 
 class TabNetClassifier(nn.Module):
@@ -72,7 +70,7 @@ class TabNetClassifier(nn.Module):
                  emb_dropout=0.0, virtual_batch_size=128):
         super().__init__()
 
-        # Embeddings
+        
         region_vocab_size, region_emb_dim = embedding_sizes['region']
         station_vocab_size, station_emb_dim = embedding_sizes['station']
         cepages_vocab_size, cepages_emb_dim = embedding_sizes['cepages']
@@ -87,7 +85,7 @@ class TabNetClassifier(nn.Module):
 
         self.encoder = TabNetEncoder(
             input_dim=total_input_dim,
-            output_dim=total_input_dim,  # usually same as input
+            output_dim=total_input_dim, 
             n_steps=n_steps,
             n_shared=shared_layers,
             n_independent=step_layers,

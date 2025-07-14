@@ -95,6 +95,7 @@ def ensure_cat_tensor(ds: TensorDataset):
 
 for ds in (train_ds, valid_ds, test_ds):
     ensure_cat_tensor(ds)
+
 # ---------- 2. Clean numerical data (nan / inf) ------------------------
 for ds in (train_ds, valid_ds):
     x_num = torch.nan_to_num(ds.tensors[0], nan=0.0, posinf=0.0, neginf=0.0)
@@ -212,8 +213,8 @@ plt.show()
 
 # ---------- 8. Agrégation des folds ------------------------------------
 
-best_thr_global = float(np.median(best_thrs))            # seuil robuste
-probs_test_mean = np.mean(probs_test_folds, axis=0)      # ensemble soft
+best_thr_global = float(np.median(best_thrs))            
+probs_test_mean = np.mean(probs_test_folds, axis=0)      
 y_pred          = (probs_test_mean >= best_thr_global).astype(int)
 
 print(f"\nSeuil médian CV : {best_thr_global:.3f}")
@@ -250,7 +251,7 @@ lgbm.fit(X_train, y_train_np)
 
 
 importances = lgbm.booster_.feature_importance(importance_type="gain")
-feat_names  = num_cols + cat_cols          # vue agrégée
+feat_names  = num_cols + cat_cols         
 top = sorted(zip(feat_names, importances[:len(feat_names)]),
              key=lambda x: x[1], reverse=True)[:15]
 print("Top gains:")
@@ -278,7 +279,6 @@ x_lgbm_test = torch.cat([x_num_test, x_1hot_test], 1).cpu().numpy()
 lgbm_test_preds = np.asarray(lgbm.predict(x_lgbm_test))
 y_test_np = y_test.cpu().numpy() if isinstance(y_test, torch.Tensor) else y_test
 
-# Metrics
 lgbm_test_acc = accuracy_score(y_test_np, lgbm_test_preds)
 lgbm_test_f1 = f1_score(y_test_np, lgbm_test_preds)
 
