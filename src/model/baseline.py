@@ -34,9 +34,6 @@ from tqdm.contrib.concurrent import process_map
 from joblib import parallel_backend
 
 
-# --------------------------------------------------------------------- #
-# Feature schema
-# --------------------------------------------------------------------- #
 NUM_FEATURES: List[str] = [
     "GDD",
     "TM_summer",
@@ -53,8 +50,8 @@ NUM_FEATURES: List[str] = [
     
 ]
 CAT_FEATURES: List[str] = ["cepages","region"]
-TARGET = "label" # Binary target: 1 for top 65% wines, 0 otherwise
-RANDOM_STATE = 64 # For reproducibility
+TARGET = "label" 
+RANDOM_STATE = 64
 
 def _categorical_encoder(kind: str):
     if kind == "linear":
@@ -135,14 +132,14 @@ def _param_grid(model_key: str) -> Dict[str, List]:
         }
     if model_key == "xgb":
         return {
-        "model__n_estimators": [80, 100, 120],           # around 100
-        "model__max_depth": [2, 3, 4],                   # around 3
-        "model__learning_rate": [0.03, 0.05, 0.07],      # around 0.05
-        "model__subsample": [0.7, 0.8, 0.9],             # around 0.8
-        "model__colsample_bytree": [0.7, 0.8, 0.9],      # around 0.8
-        "model__gamma": [0, 0.05, 0.1],                  # around 0
-        "model__reg_alpha": [0.05, 0.1, 0.2],            # around 0.1
-        "model__reg_lambda": [0.8, 1, 1.2],              # around 1
+        "model__n_estimators": [100, 150, 200],             
+        "model__max_depth": [3, 4, 5],                      
+        "model__learning_rate": [0.02, 0.05, 0.1],          
+        "model__subsample": [0.6, 0.8, 1.0],                
+        "model__colsample_bytree": [0.6, 0.8, 1.0],         
+        "model__gamma": [0, 0.1, 0.2],                      
+        "model__reg_alpha": [0, 0.1, 0.5],                  
+        "model__reg_lambda": [0.5, 1.0, 1.5],               
     }
     return {
         "model__learning_rate": [0.05, 0.1],
@@ -250,11 +247,10 @@ def main(argv: List[str]) -> None:
         print(f"ROC-AUC  : {auc:.4f}")
         _print_confusion(y_test, y_pred)
         
-        # Print feature importances if available
+        
         model = best_est.named_steps["model"]
         pre = best_est.named_steps["pre"]
         if hasattr(model, "feature_importances_"):
-            # Get feature names after preprocessing
             try:
                 feature_names = (
                     pre.get_feature_names_out()
@@ -274,11 +270,11 @@ def main(argv: List[str]) -> None:
 
 
 if __name__ == "__main__":
-    # Hardcoded file paths for direct execution
+    
     TRAIN_PATH = "data/vivino_wine_train_label.parquet"
     TEST_PATH = "data/vivino_wine_test_label.parquet"
-    MODEL = "all"  # or "lr", "rf", "hgb"
-    GRID_SEARCH = True  # Set to False to disable grid search
+    MODEL = "all"  # Options: "xgb", "lr", "rf", "hgb", "all"
+    GRID_SEARCH = True  
 
     class Args:
         train = Path(TRAIN_PATH)
@@ -286,7 +282,7 @@ if __name__ == "__main__":
         model = MODEL
         grid_search = GRID_SEARCH
 
-    # Simulate argparse.Namespace
+    
     args = Args()
 
     df_train = pd.read_parquet(args.train)

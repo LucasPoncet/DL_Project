@@ -163,10 +163,14 @@ class TransformerEncoderBlock(nn.Module):
 
         self.norm_layer1 = nn.LayerNorm(input_dim)
         self.dropout1 = nn.Dropout(dropout_rate)
-        hidden_dim = input_dim * expansion_factor
+        expansion_factor = 6                          # same as before
+        hidden_dim = input_dim * expansion_factor           # e.g. 64 → 256
+
         self.mlp = nn.Sequential(nn.Linear(input_dim, hidden_dim),
                                  activation,
                                  nn.Linear(hidden_dim, input_dim))
+
+        
         self.norm_layer2 = nn.LayerNorm(input_dim)
         self.dropout2 = nn.Dropout(dropout_rate)
 

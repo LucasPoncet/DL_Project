@@ -24,6 +24,8 @@ class Utilities:
                 return nn.Sigmoid()
             case "tanh":
                 return nn.Tanh()
+            case "gelu":
+                return nn.GELU()
             case "linear" | _:
                 return None
 
