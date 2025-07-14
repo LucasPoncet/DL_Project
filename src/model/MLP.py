@@ -171,8 +171,8 @@ for fold, (tr_idx, va_idx) in enumerate(skf.split(np.zeros_like(y_np), y_np)):
     )
     train_acc_hist, valid_acc_hist = trainer.run()    
     fold_path = f"models/mlp_fold{fold+1}.pth"
-    torch.save(trainer.model.state_dict(), fold_path)
-    print("  ↳ modèle sauvegardé →", fold_path)
+    # torch.save(trainer.model.state_dict(), fold_path)
+    # print("   modèle sauvegardé ", fold_path)
     L = len(train_acc_hist)                     
     train_hist_all[:L] += np.array(train_acc_hist)
     valid_hist_all[:L] += np.array(valid_acc_hist)
@@ -183,12 +183,16 @@ for fold, (tr_idx, va_idx) in enumerate(skf.split(np.zeros_like(y_np), y_np)):
             trainer.model(x_num_va.to(device), x_cat_va.to(device)), 1
         )[:, 1].cpu().numpy()
     pr, rc, th = precision_recall_curve(y_va.cpu().numpy(), p_va)
-    mask = rc >= 0.75                    
-    if mask.any():                        
-        idx_in_mask = np.argmax(pr[mask])       
-        best_thr    = th[mask][idx_in_mask]     
-    else:                                
-        best_thr = 0.5
+    rc_, pr_ = rc[:-1], pr[:-1]
+
+    mask = rc_ >= 0.75
+    if mask.any():
+        idx_best = np.argmax(pr_[mask])
+        best_thr = th[mask][idx_best]
+    else:
+        best_thr = 0.5               
+
+    best_thrs.append(best_thr) 
 
     with torch.no_grad():
         p_te = torch.softmax(
@@ -220,9 +224,9 @@ y_pred          = (probs_test_mean >= best_thr_global).astype(int)
 print(f"\nSeuil médian CV : {best_thr_global:.3f}")
 print(classification_report(y_test.cpu().numpy(), y_pred))
 
-torch.save(global_best_w, "models/mlp_best_valid.pth")
-print(f"✓ Modèle meilleur fold sauvegardé  → models/mlp_best_valid.pth "
-      f"(valid {global_best_acc:.2f}%)")
+# torch.save(global_best_w, "models/mlp_best_valid.pth")
+# print(f" Modèle meilleur fold sauvegardé  → models/mlp_best_valid.pth "
+#       f"(valid {global_best_acc:.2f}%)")
 # ---------- 10. LightGBM baseline --------------------------------------
 
 if cat_cols:

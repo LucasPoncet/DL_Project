@@ -10,3 +10,9 @@ data/2025-07-01-delim-parcellaire-aoc-shp/
 
 # Notebooks
 *.ipynb
+
+
+#Useless files
+plot_weather_preprocessing.py
+number.py
+plot_weather_collection.py
