@@ -127,7 +127,5 @@ class DatasetLoader:
             for col in self.num_cols:
                 df[col] = pd.to_numeric(df[col], errors='coerce')
 
-        print(train_df[self.cat_cols].dtypes)
-
         return train_df, valid_df, df_test, self.num_cols, self.cat_cols, self.cat_mapping
 

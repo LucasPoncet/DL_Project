@@ -1,12 +1,3 @@
-# ---------------------------------------------------------------------------
-# Dataset utilitaire
-# Génère pour chaque (région × millésime) un échantillon contenant :
-#   • x_seq   : séquence météo (T, F_seq)
-#   • x_cat   : indices catégoriels [region, station, cépage]
-#   • x_stat  : attributs statiques numériques (ex. price)
-#   • y       : label binaire (0/1)
-# ---------------------------------------------------------------------------
-
 from typing import List, Optional
 import pandas as pd
 import torch
@@ -22,16 +13,6 @@ class WineSeqDataset(Dataset):
                  static_cols: Optional[List[str]] = None,
                  year_col: str = 'year',
                  pad_mode: str = 'zeros'):
-        """Paramètres
-        df         : DataFrame au format long (une ligne = 1 millésime)
-        seq_len    : taille de la fenêtre temporelle (T)
-        num_cols   : colonnes météo numériques (F_seq)
-        cat_cols   : colonnes catégorielles déjà encodées en int64 (ordre: region, station, cépage)
-        label_col  : colonne cible binaire
-        static_cols: colonnes statiques numériques (ex. ['price'])
-        year_col   : colonne d'ordre chronologique (par défaut 'year')
-        pad_mode   : 'zeros' (padding) ou 'skip' (on ignore si pas assez d'historique)
-        """
         super().__init__()
         self.seq_len     = seq_len
         self.num_cols    = num_cols
@@ -41,10 +22,10 @@ class WineSeqDataset(Dataset):
         self.year_col    = year_col
         self.pad_mode    = pad_mode
 
-        # Trie par région puis année pour assurer l'ordre chronologique
+        # Sort by region then year for chronological order
         df_sorted = df.sort_values([cat_cols[0], year_col])
 
-        self.samples = []  # liste de mini‑dataframes (fenêtres)
+        self.samples = []
         for region, g in df_sorted.groupby(cat_cols[0]):
             g = g.reset_index(drop=True)
             for idx in range(len(g)):
@@ -54,35 +35,41 @@ class WineSeqDataset(Dataset):
                     if pad_mode == 'skip':
                         continue
                     if pad_mode == 'zeros':
-                        # Padding par copies de la première ligne puis remise en ordre
-                        pad_rows = [window.iloc[0]] * (seq_len - len(window))
-                        window = pd.concat(pad_rows + [window])
-                self.samples.append(window)
+                        pad_rows = [window.iloc[0].copy() for _ in range(seq_len - len(window))]
+                        window = pd.concat([pd.DataFrame(pad_rows), window], ignore_index=True)
+                # ENFORCE window length
+                if len(window) == seq_len and not pd.isna(window.iloc[-1][label_col]):
+                    self.samples.append(window)
 
-    # ------------------------------------------------------------------
     def __len__(self):
         return len(self.samples)
 
-    # ------------------------------------------------------------------
     def __getitem__(self, idx):
         window = self.samples[idx]
         window = window.sort_values(self.year_col)
 
-        # Séquence météo (T, F_seq)
+        # Sequence features
         x_seq = torch.tensor(window[self.num_cols].values, dtype=torch.float32)
 
-        # Catégorielles → dernière ligne (millésime cible)
+        # Categorical features (last row)
         last_row = window.iloc[-1]
-        cat_vals = pd.Series(last_row[self.cat_cols]).fillna(-1).astype(int).values
+        cat_series = pd.Series(last_row[self.cat_cols]).infer_objects(copy=False)
+        cat_vals = cat_series.fillna(-1).astype(int).values
         x_cat = torch.tensor(cat_vals, dtype=torch.long)
 
-        # Statique numérique (ex. price)
+        # Static numeric features (last row)
         if self.static_cols:
-            x_stat = torch.tensor(last_row[self.static_cols].values.astype(float), dtype=torch.float32)
+            stat_series = pd.Series(last_row[self.static_cols]).infer_objects(copy=False)
+            stat_vals = stat_series.fillna(0).astype(float).values
+            x_stat = torch.tensor(stat_vals, dtype=torch.float32)
         else:
             x_stat = torch.empty(0, dtype=torch.float32)
 
-        # Label binaire
-        y = torch.tensor(int(last_row[self.label_col]), dtype=torch.long)
+
+        # Label (last row)
+        label_val = last_row[self.label_col]
+        if pd.isna(label_val):
+            label_val = -1
+        y = torch.tensor(int(label_val), dtype=torch.long)
 
         return x_seq, x_cat, x_stat, y

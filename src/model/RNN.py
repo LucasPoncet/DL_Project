@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 import pandas as pd
 from torch.utils.data import DataLoader
 from ClassesData.WineDataModule import DatasetLoader
@@ -47,8 +46,8 @@ for col in static_cols:
 for df in [train_df, valid_df]:
     df['label'] = df['label'].fillna(-1).astype(int)
 
-print("NaNs in train_df['label']:", train_df['label'].isna().sum())
-print("NaNs in valid_df['label']:", valid_df['label'].isna().sum())
+#print("NaNs in train_df['label']:", train_df['label'].isna().sum())
+#print("NaNs in valid_df['label']:", valid_df['label'].isna().sum())
 
 # ---------- 3. Prepare sequence datasets and loaders -------------------
 seq_len = 5
@@ -61,23 +60,27 @@ train_loader = DataLoader(train_ds, batch_size=256, shuffle=True)
 valid_loader = DataLoader(valid_ds, batch_size=512, shuffle=False)
 
 # ---------- 4. Hyperparameters and model -------------------------------
-embed_sizes = {
-    'region':  (len(map_['region']), 8),
-    'station': (len(map_['station']),16),
-    'cepages': (len(map_['cepages']), 8),
-}
+input_dim = (len(num_cols), seq_len)
+embedding_dim = {'region': 8, 'station': 16, 'cepages': 8}
+
 hp = dict(
-    seq_len             = seq_len,
-    num_seq_features    = len(num_cols),
-    static_num_features = len(static_cols),
-    embedding_sizes     = embed_sizes,
-    rnn_hidden_size     = [64],
-    num_layers          = 1,
-    dropout_rate        = 0.2,
-    bidirectional       = False,
-    output_dim          = 2,
-    learning_rate       = 1e-3,
-    max_epoch           = 50,
+    input_dim=input_dim,
+    output_dim=2,
+    n_token=None,
+    rnn_hidden_size=[64],
+    dropout_rate=0.2,
+    num_layers=1,
+    embedding_dim=embedding_dim,
+    embedding_sizes={
+        'region':  (len(map_['region']), 8),
+        'station': (len(map_['station']), 16),
+        'cepages': (len(map_['cepages']), 8),
+    },
+    static_num_features=len(static_cols),
+    activation="tanh",
+    bidirectional=False,
+    learning_rate=1e-3,
+    max_epoch=50
 )
 
 model = WineRNN(hp).to(device)

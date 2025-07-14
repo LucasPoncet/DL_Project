@@ -29,7 +29,7 @@ class WineRNN(nn.Module):
         emb_dim = sum(d for _, (_, d) in hp['embedding_sizes'].items())
 
         self.lstm = nn.LSTM(
-            input_size   = hp['num_seq_features'],
+            input_size = hp['input_dim'][0],
             hidden_size  = self.hidden_size,
             num_layers   = self.num_layers,
             batch_first  = True,
