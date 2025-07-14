@@ -8,49 +8,47 @@ class TabularMLP(nn.Module):
     def __init__(self, hyperparameters, embedding_sizes):
         super(TabularMLP, self).__init__()
 
+        # --- hyper‑parameters ------------------------------------------------
         self.hidden_layers_size = hyperparameters["hidden_layers_size"]
-        self.activation = Utilities.get_activation(hyperparameters["activation"])
-        self.batch_normalization = hyperparameters["batch_normalization"]
-        self.dropout_rate = hyperparameters["dropout_rate"]
+        self.activation         = Utilities.get_activation(hyperparameters["activation"])
+        self.batch_normalization= hyperparameters["batch_normalization"]
+        self.dropout_rate       = hyperparameters["dropout_rate"]
+        num_numeric_features    = hyperparameters["num_numeric_features"]
+        output_dim              = hyperparameters["output_dim"]
 
-        # Embeddings
-        region_vocab_size, region_emb_dim = embedding_sizes['region']
-        station_vocab_size, station_emb_dim = embedding_sizes['station']
-        cepages_vocab_size, cepages_emb_dim = embedding_sizes['cepages']
+        # --- embeddings (0‑N cats) -----------------------------------------
+        self.emb_layers = nn.ModuleDict({
+            name: nn.Embedding(vocab, dim) for name, (vocab, dim) in embedding_sizes.items()
+        })
+        emb_total_dim = sum(dim for (_, dim) in embedding_sizes.values())
 
-        self.region_emb = nn.Embedding(region_vocab_size, region_emb_dim)
-        self.station_emb = nn.Embedding(station_vocab_size, station_emb_dim)
-        self.cepages_emb = nn.Embedding(cepages_vocab_size, cepages_emb_dim)
-
-        # Calculate total input dimension: numerical + embeddings
-        num_numeric_features = hyperparameters["num_numeric_features"]
-        total_input_dim = num_numeric_features + region_emb_dim + station_emb_dim + cepages_emb_dim
-
-        # Dense layers
-        layers = []
-        layers.append(DenseBlock(in_size=total_input_dim,
-                                 out_size=self.hidden_layers_size[0],
-                                 activation=self.activation,
-                                 batch_normalization=self.batch_normalization,
-                                 dropout_rate=self.dropout_rate))
-
-        for i in range(1, len(self.hidden_layers_size)):
-            layers.append(DenseBlock(in_size=self.hidden_layers_size[i-1],
-                                     out_size=self.hidden_layers_size[i],
-                                     activation=self.activation,
-                                     batch_normalization=self.batch_normalization,
-                                     dropout_rate=self.dropout_rate))
-
-        layers.append(nn.Linear(self.hidden_layers_size[-1], hyperparameters["output_dim"]))
-
+        # --- dense network ---------------------------------------------------
+        total_input_dim = num_numeric_features + emb_total_dim
+        layers: list[nn.Module] = []  # explicit module list → avoids Pylance type clash
+        layers.append(
+            DenseBlock(in_size=total_input_dim,
+                       out_size=self.hidden_layers_size[0],
+                       activation=self.activation,
+                       batch_normalization=self.batch_normalization,
+                       dropout_rate=self.dropout_rate)
+        )
+        for in_size, out_size in zip(self.hidden_layers_size[:-1], self.hidden_layers_size[1:]):
+            layers.append(
+                DenseBlock(in_size=in_size,
+                           out_size=out_size,
+                           activation=self.activation,
+                           batch_normalization=self.batch_normalization,
+                           dropout_rate=self.dropout_rate)
+            )
+        layers.append(nn.Linear(self.hidden_layers_size[-1], output_dim))
         self.classifier = nn.Sequential(*layers)
 
-    def forward(self, x_numeric, x_cat):
-        x_emb = torch.cat([
-            self.region_emb(x_cat[:, 0]),
-            self.station_emb(x_cat[:, 1]),
-            self.cepages_emb(x_cat[:, 2])
-        ], dim=1)
-
-        x = torch.cat([x_numeric, x_emb], dim=1)
+    # ------------------------------------------------------------------
+    def forward(self, x_numeric: torch.Tensor, x_cat: torch.Tensor):
+        """Concatenate numeric features and (optional) embeddings then classify."""
+        if self.emb_layers:
+            emb_tensors = [layer(x_cat[:, idx]) for idx, layer in enumerate(self.emb_layers.values())]
+            x = torch.cat([x_numeric] + emb_tensors, dim=1)
+        else:
+            x = x_numeric 
         return self.classifier(x)
