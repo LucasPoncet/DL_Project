@@ -1,103 +1,82 @@
-# DL_Wine: Predicting Wine Quality from Weather Data
+# DL-Wine: Predicting Wine Quality from Weather Patterns
+This repository contains a set of scripts and notebooks used to predict
+wine quality from historical weather observations. Weather data from Météo‑Franc
+e is merged with wine ratings scraped from Vivino to train deep learning models
+capable of anticipating whether a vintage will be good given the year's climate.
 
-This project leverages deep learning to predict wine quality based on historical meteorological data and wine ratings collected from Vivino. The objective is to provide predictive insights on whether a specific year's climatic conditions are favorable for producing high-quality wine.
+ ---
 
----
+## Repository Contents
 
-## Project Overview
+- **Data collection and preprocessing** scripts
+- **Deep learning models** for tabular data
+- **Jupyter notebooks** for analysis and experimentation
 
-This repository includes:
-- **Data acquisition and preprocessing scripts**
-- **Machine Learning (ML) models**
-- **Analytical Jupyter notebooks**
+ ---
 
----
+ ## Installation
 
-## Installation
+First install the Python dependencies:
 
-### Dependencies
-
-Install required packages via `requirements.txt`:
-
-```bash
+ ```bash
 pip install -r requirements.txt
 ```
 
-Or manually:
-
-```bash
-pip install pandas numpy matplotlib xarray netcdf4 torch torchvision pytorch-lightning
-```
+ The main packages used are `pandas`, `numpy`,`optuna`,`polars`,`plotly` and `torch`.
 
 ---
 
-## Data
+## Data Overview
 
-### Weather Data
+### Weather
+Weather observations are organised by French department and cover 1950–2
+025. The raw and processed CSV/Parquet files can be found at:
+[Météo France](https://www.data.gouv.fr/datasets/donnees-climatologiques-de-base-quotidiennes/)
+Weather observations are organised by French department and cover 1950–2
+025. The raw and processed CSV/Parquet files are located in:
 
-Weather data is sourced from Météo-France and organized by department:
-
-- Historical data (1950-2023)
-- Recent data (2024-2025)
-
-Stored in:
-```
+ ```
 data/weather/
 data/weather_by_year/
 data/weather_by_year_cleaned/
 ```
 
-### Wine Data
-
-Wine quality ratings scraped from Vivino:
-
-- Raw data: `data/Wine/vivino_wines.csv`
-- Regions metadata: `data/Wine/regions.csv`
-
-[🌐 Carte interactive des vins  
-![](docs/wine_map_thumbnail.png)](https://lucasponcet.github.io/DL_Project/wine_map.html)
+### Wine
+Wine ratings scraped from Vivino are stored in `data/Wine/`. The region
+metadata is provided in `data/Wine/regions_corrected.csv`.
+An interactive map of the wine regions can be found [here](docs/wine_map.html) !
 
 ---
 
 ## Quick Start
 
-### Example: Loading Wine & Weather data
+Load the datasets with `pandas`:
 
-```python
+```
+python
 import pandas as pd
 
-wine_df = pd.read_csv('data/Wine/vivino_wines.csv')
-weather_df = pd.read_parquet('data/weather_features/weather_features_33.parquet')
+wine = pd.read_csv('data/out/vivino_wines_with_weather_AOC.csv')
+weather = pd.read_parquet('data/weather_by_year/weather_all_stations_2010.parquet')
 
-# Inspect datasets
-print(wine_df.head())
-print(weather_df.head())
+print(wine.head())
+print(weather.head())
 ```
 
----
+ ---
 
 ## Project Structure
 
 ```
-DL_Wine
-├─ data/
-│  ├─ weather/                   # Raw weather CSV data
-│  ├─ weather_by_year/           # Weather data by year (raw)
-│  ├─ weather_by_year_cleaned/   # Cleaned yearly weather data
-│  ├─ weather_features/          # Extracted weather features
-│  ├─ Wine/                      # Vivino scraped wine data
-│  └─ weather_pq/                # Cleaned Parquet weather data
+DL_Project
+├─ data/                   # Raw and processed datasets
 ├─ src/
-│  ├─ model/                     # ML model scripts and classes
-│  ├─ preprocessing/
-│  │  ├─ Weather/                # Weather preprocessing notebooks and CSV
-│  │  └─ Wine & Weather/         # Scripts/notebooks for merging datasets
-│  └─ scrapper/                  # Scraping scripts
-├─ requirements.txt
-├─ README.md
-└─ License
-```
-
+│  ├─ model/               # Training scripts and model classes
+│  ├─ preprocessing/       # Notebooks and scripts to prepare data
+│  └─ scrapper/            # Wine rating scrapers
+├─ models/                 # Saved model weights
+└─ docs/                   #  HTML map
+ ```
 ---
 
 ## Workflow
@@ -115,7 +94,7 @@ Merge Wine and Weather data:
 
 ```bash
 cd src/preprocessing/"Wine & Weather"
-jupyter notebook WQI.ipynb
+python build_wines_coord.py
 ```
 
 ### Model Training
@@ -124,7 +103,7 @@ Train and evaluate the predictive model:
 
 ```bash
 cd src/model
-python main_tabular.py
+python MLP.py
 ```
 
 ---
@@ -148,4 +127,3 @@ This project is licensed under the MIT License. See the `License` file for detai
 ---
 
 Enjoy predicting wine quality!
-```
