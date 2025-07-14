@@ -235,11 +235,10 @@ class Sparsemax(nn.Module):
 
         k_max = support.sum(dim=dim, keepdim=True)
 
-        # Compute τ (threshold)
         tau_sum = z_cumsum.gather(dim, k_max - 1)
         tau = (tau_sum - 1) / k_max.float()
 
-        # Final projection
+
         output = torch.clamp(input - tau, min=0)
         return output
 

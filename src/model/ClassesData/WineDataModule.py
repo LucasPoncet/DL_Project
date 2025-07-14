@@ -20,7 +20,6 @@ class DatasetLoader:
         self.valid_frac, self.dtype = valid_frac, dtype
         self.cat_mapping: Optional[dict[str, dict[str, int]]] = None
 
-    # -------------------------------------------------------------- #
     def create_index_mapping(self, df, categorical_columns):
         mapping = {}
         for col in categorical_columns:
@@ -37,7 +36,7 @@ class DatasetLoader:
             self.num_cols = [c for c in train_valid.columns if c not in excluded]
         elif self.cat_cols is None and self.num_cols is None:
             raise ValueError("At least one of num_cols or cat_cols must be provided.")
-        # train/valid split
+        
         if "split" in train_valid.columns:
             train_df = train_valid[train_valid["split"] == "train"].copy()
             valid_df = train_valid[train_valid["split"] == "valid"].copy()
@@ -45,7 +44,7 @@ class DatasetLoader:
             train_df = train_valid.sample(frac=1 - self.valid_frac, random_state=42)
             valid_df = train_valid.drop(train_df.index)
 
-        # compute mapping before encoding
+
         self.cat_mapping = self.create_index_mapping(train_valid, self.cat_cols)
 
         def df_to_ds(df: pd.DataFrame) -> TensorDataset:
@@ -56,7 +55,7 @@ class DatasetLoader:
 
             df = df.copy()
 
-            # Numeric features
+
             if self.num_cols:
                 for col in self.num_cols:
                     df[col] = pd.to_numeric(df[col], errors='coerce')
@@ -66,7 +65,6 @@ class DatasetLoader:
             else:
                 x_num = torch.empty((len(df), 0), dtype=self.dtype)
 
-            # Categorical features
             for col in self.cat_cols:
                 df[col] = df[col].fillna('__MISSING__')
 

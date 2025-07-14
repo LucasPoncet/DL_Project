@@ -1,7 +1,3 @@
-# ------------------------------------------------------------
-#  COMPLETE TRAINING SCRIPT  –  binary wine-quality classifier
-#                Version TabNet (PyTorch from-scratch)
-# ------------------------------------------------------------
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,7 +7,7 @@ import lightgbm as lgb
 from sklearn.metrics import accuracy_score, f1_score, classification_report
 from sklearn.metrics import precision_recall_curve
 
-# --- local modules ------------------------------------------------------
+
 from ClassesData.WineDataModule import DatasetLoader
 from ClassesML.TabNetEncoder          import TabNetClassifier  
 from ClassesML.Scope            import ScopeClassifier
@@ -64,7 +60,7 @@ embedding_sizes = {
     "cepages": (num_cepages, 8),
 }
 
-# ---------- 4. DataLoader (pour steps_per_epoch) ------------------------
+# ---------- 4. DataLoader (for steps_per_epoch) ------------------------
 train_loader = DataLoader(
     TensorDataset(x_num_train, x_cat_train, y_train),
     batch_size=512,
@@ -72,10 +68,9 @@ train_loader = DataLoader(
 )
 print("Minibatch sample:", next(iter(train_loader))[0].shape)
 
-# ---------- 5. Hyper-paramètres TabNet ---------------------------------
+# ---------- 5. Hyperparameter TabNet ---------------------------------
 n_classes = 2
 hyper = {
-    # optimiser
     "learning_rate" : 1.5e-3,
     "max_epoch"     : 90,          # early-stop on precision
     # network
@@ -118,7 +113,7 @@ trainer.set_data(
 
 train_acc, valid_acc = trainer.run()
 
-# ---------- 8. Courbes d’accuracy --------------------------------------
+# ---------- 8. Accuracy curves --------------------------------------
 plt.plot(train_acc, label="Train")
 plt.plot(valid_acc, label="Valid")
 plt.title("TabNet – accuracy vs epochs")
@@ -144,8 +139,7 @@ print(f"Best threshold for precision {best_thresh:.2f} (target 0.85)")
 print(f"Seuil={THRESH:.2f}")
 print(classification_report(y_valid.numpy(), pred_val))
 
-# ---------- 10. LightGBM baseline (inchangé) ----------------------------
-# (identique à ton script MLP – gardé pour la comparaison)
+# ---------- 10. LightGBM baseline ----------------------------
 def onehot_batch(x_cat, dims):
     return torch.cat([
         torch.nn.functional.one_hot(x_cat[:, i], num_classes=d).float()
@@ -164,7 +158,7 @@ lgbm_pred = lgbm.predict(X_valid)
 lgbm_pred = np.asarray(lgbm_pred)
 print("LGBM valid acc:", accuracy_score(y_valid.numpy(), lgbm_pred))
 
-# ---------- 11. Evaluation sur le test set ------------------------------
+# ---------- 11. Eval on test set ------------------------------
 x_num_test, x_cat_test, y_test = test_ds.tensors
 with torch.no_grad():
     test_logits = model(x_num_test.to(device), x_cat_test.to(device))
@@ -178,7 +172,7 @@ print(classification_report(y_test.numpy(), test_pred))
 torch.save(model.state_dict(), "models/tabnet_model.pth")
 print("Model saved as 'tabnet_model.pth'")
 
-# ---------- 12. Analyse des masques ------------------------------------
+# ---------- 12. Analyse of Masks------------------------------------
 def collect_global_masks(model, loader, device):
     model.eval(); all_masks = []
     with torch.no_grad():
@@ -186,10 +180,9 @@ def collect_global_masks(model, loader, device):
             _, masks = model(xb_num.to(device),
                              xb_cat.to(device),
                              return_masks=True)
-            # moyenne sur les steps puis sur le batch
-            batch_mask = torch.stack(masks).mean(0)   # [batch, features]
+            batch_mask = torch.stack(masks).mean(0)   
             all_masks.append(batch_mask.cpu())
-    return torch.cat(all_masks).mean(0)               # [features]
+    return torch.cat(all_masks).mean(0)            
 
 global_mask = collect_global_masks(model, train_loader, device)
 

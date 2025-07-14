@@ -6,9 +6,8 @@ from torch.optim.lr_scheduler import OneCycleLR, ReduceLROnPlateau
 
 class TrainerClassifier:
     def __init__(self, hyperparameter):
-        self.hp = hyperparameter         # shorthand
+        self.hp = hyperparameter
 
-    # setters stay the same ----------------------------------------------
     def set_model(self, model, device):
         self.model, self.device = model, device
 
@@ -16,7 +15,6 @@ class TrainerClassifier:
         self.scope = scope
 
     def set_data(self, x_train, y_train, x_valid, y_valid):
-        # we keep the raw tensors but immediately wrap them in DataLoaders
         bs = self.hp.get("batch_size", 512)
 
         if isinstance(x_train, (tuple, list)):
@@ -45,7 +43,6 @@ class TrainerClassifier:
             )
 
 
-    # --------------------------------------------------------------------
     def _epoch_loop(self, loader, train_phase=True):
         if train_phase:
             self.model.train()
@@ -67,8 +64,8 @@ class TrainerClassifier:
                 if isinstance(self.scope.scheduler, OneCycleLR):
                     self.scope.scheduler.step()
 
-            # stats
-            total_loss    += loss.item() * y.size(0)            # sum over batch
+           
+            total_loss    += loss.item() * y.size(0)            
             total_correct += Utilities.compute_accuracy(y, y_hat, count=True)
             total_samples += y.size(0)
 
@@ -76,7 +73,7 @@ class TrainerClassifier:
         avg_acc  = 100.0 * total_correct / total_samples
         return avg_loss, avg_acc
 
-    # --------------------------------------------------------------------
+
     def run(self):
         print("Starting training loop…")
         train_hist, valid_hist = [], []
@@ -92,7 +89,6 @@ class TrainerClassifier:
                   f"train: loss {tr_loss:.4f} | acc {tr_acc:.2f}%   "
                   f"valid: loss {va_loss:.4f} | acc {va_acc:.2f}%")
 
-            # scheduler / early stopping (same logic as before)
             if self.scope.scheduler:
                 old_lr = self.scope.optimizer.param_groups[0]['lr']
                 self.scope.scheduler.step(va_acc)
@@ -107,7 +103,7 @@ class TrainerClassifier:
 
             if isinstance(self.scope.scheduler, ReduceLROnPlateau):
                 old_lr = self.scope.optimizer.param_groups[0]['lr']
-                self.scope.scheduler.step(va_acc)            # needs metric
+                self.scope.scheduler.step(va_acc)           
                 new_lr = self.scope.optimizer.param_groups[0]['lr']
                 if old_lr != new_lr:
                     print(f"LR change: {old_lr:.2e} → {new_lr:.2e} at epoch {epoch}")
